@@ -3,6 +3,15 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import element from "element-ui"
+import 'element-ui/lib/theme-chalk/index.css';
+import axios from 'axios'
+import swiper from "vue-awesome-swiper"
+import 'swiper/dist/css/swiper.css'
+
+Vue.use(axios)
+Vue.use(element)
+Vue.use(swiper)
 
 Vue.config.productionTip = false
 
