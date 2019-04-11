@@ -2,7 +2,7 @@
   <div class="container">
     <el-header class="header">
       <div class="header-img">
-        <p class="header-title">CornShop</p>
+        <p class="header-title">VideoShop</p>
 
       </div>
     </el-header>
@@ -47,8 +47,8 @@
 </template>
 
 <script>
-  import mima from "../img/login/mima.png"
-  import shop from "../img/login/shop.png"
+  import mima from "../../img/login/mima.png"
+  import shop from "../../img/login/shop.png"
     export default {
         name: "Login",
       data(){
@@ -94,8 +94,8 @@
 
                 method:"post",
                 data:{
-                  userAccount:this.account,
-                  userPassword:this.password
+                  userAccount:this.form.userAccount,
+                  userPassword:this.form.userPassword
                 },
                 headers:{
                   // "Access-Control-Allow-Origin":"*"
@@ -103,6 +103,15 @@
                 url:"http://192.168.2.3:8080/user/userLogin"
               }).then(res =>{
                 console.log(res)
+                if(res.data.object.status == "SUCCESS"){
+                  //登陆成功后设置token
+                  localStorage.setItem("userToken",res.data.object.userToken)
+                  localStorage.setItem("userId",res.data.object.userId)
+                }else{
+                  this.$alert(res.data.object.message,"错误",{
+                    confirmButtonText: '确定',
+                  })
+                }
               })
             }
           })
@@ -117,7 +126,7 @@
   .container{
     width: 100%;
     height: 100%;
-    background: url("../img/login/bkg.jpg");
+    background: url("../../img/login/bkg.jpg");
     background-size: cover;
     position: relative;
   }
@@ -189,7 +198,7 @@
   .header-img{
     width: 50px;
     height: 50px;
-    background: url("../img/login/shop.png");
+    background: url("../../img/login/shop.png");
     background-size: cover;
     margin-left: 42px;
     position: relative;

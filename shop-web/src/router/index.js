@@ -1,9 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Login from '@/components/Login'
+import Login from '@/components/user/Login'
+import BackStage from "@/components/administrator/BackStage"
 
 
 Vue.use(Router)
+
 
 export default new Router({
   routes: [
@@ -11,6 +13,11 @@ export default new Router({
       path: '/',
       name: 'Login',
       component: Login
+    },
+    {
+      path: '/backStage',
+      name: 'BackStage',
+      component: BackStage
     }
   ]
 })
