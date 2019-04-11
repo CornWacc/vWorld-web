@@ -9,10 +9,9 @@ import axios from 'axios'
 import swiper from "vue-awesome-swiper"
 import 'swiper/dist/css/swiper.css'
 
-Vue.use(axios)
 Vue.use(element)
 Vue.use(swiper)
-
+Vue.prototype.$axios = axios
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
