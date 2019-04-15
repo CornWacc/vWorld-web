@@ -19,7 +19,7 @@
                  <span>User</span>
                </template>
                <el-menu-item-group>
-                 <el-menu-item index="1-1">用户管理操作</el-menu-item>
+                 <el-menu-item index="1-1"><router-link to="/userList" tag="div">用户管理操作</router-link></el-menu-item>
                  <el-menu-item index="1-2">用户登录日志</el-menu-item>
                </el-menu-item-group>
              </el-submenu>
@@ -73,6 +73,7 @@
         </el-header>
 
         <el-main>
+          <router-view name="UserList" content="UserLogin"></router-view>
         </el-main>
       </el-container>
     </el-container>

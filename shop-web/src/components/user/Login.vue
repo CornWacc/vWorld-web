@@ -2,7 +2,7 @@
   <div class="container">
     <el-header class="header">
       <div class="header-img">
-        <p class="header-title">VideoShop</p>
+        <p class="header-title">微世界</p>
 
       </div>
     </el-header>
@@ -100,13 +100,14 @@
                 headers:{
                   // "Access-Control-Allow-Origin":"*"
                 },
-                url:"http://192.168.2.3:8080/user/userLogin"
+                url:"http://192.168.2.25:8080/user/userLogin"
               }).then(res =>{
                 console.log(res)
                 if(res.data.object.status == "SUCCESS"){
                   //登陆成功后设置token
                   localStorage.setItem("userToken",res.data.object.userToken)
                   localStorage.setItem("userId",res.data.object.userId)
+                  this.$router.push("/shopMain")
                 }else{
                   this.$alert(res.data.object.message,"错误",{
                     confirmButtonText: '确定',
@@ -206,9 +207,10 @@
   }
   .header-title{
     margin-top: 0px;
+    width: 80px;
     position: relative;
-    left: 64px;
-    top: 12px;
+    left: 56px;
+    top: 10px;
     font-size:24px;
   }
   .swiper-container{

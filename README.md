@@ -1,3 +1,3 @@
 # CornShop-web
 
-## 商城前端(Vue+elementUi+axios+swiper)
+## 电影前端(Vue+elementUi+axios+swiper)
