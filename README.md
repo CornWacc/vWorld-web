@@ -1,3 +1,3 @@
-# CornShop-web
+# vWorld-web
 
-## 电影前端(Vue+elementUi+axios+swiper)
+## 微世界前端(Vue+elementUi+axios+swiper)
