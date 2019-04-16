@@ -19,18 +19,22 @@ export default new Router({
     {
       path: '/backStage',
       name: 'BackStage',
-      component: BackStage
+      component: BackStage,
+      children: [
+        {
+          path:"userList",
+          name:"UserList",
+          component:UserList
+        },
+      ]
     },
-    {
-      path:"/userList",
-      name:"UserList",
-      component:UserList
-    },
+
     {
       path:"/shopMain",
       name:"ShopMain",
       component:ShopMain
     },
+
     {
       path:"/reg",
       name:"Reg",

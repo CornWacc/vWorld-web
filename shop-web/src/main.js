@@ -8,6 +8,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 import axios from 'axios'
 import swiper from "vue-awesome-swiper"
 import 'swiper/dist/css/swiper.css'
+import './assets/iconFont/iconfont.css'
 
 Vue.use(element)
 Vue.use(swiper)
@@ -18,6 +19,5 @@ Vue.config.productionTip = false
 new Vue({
   el: '#app',
   router,
-  components: { App },
-  template: '<App/>'
+  render: h => h(App)
 })

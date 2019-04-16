@@ -5,7 +5,7 @@
         <div class="aside-title">
           <el-row>
             <el-col :span="10"><div class="aside-title-image"></div></el-col>
-            <el-col :span="8"><div class="aside-title-font">VideoShop</div></el-col>
+            <el-col :span="8"><div class="aside-title-font">微世界</div></el-col>
           </el-row>
          <div class="menu">
            <el-menu
@@ -15,12 +15,12 @@
              @close="handleClose">
              <el-submenu index="1">
                <template slot="title">
-                 <i class="el-icon-service"></i>
+                 <i class="iconfont icon-user"></i>
                  <span>User</span>
                </template>
                <el-menu-item-group>
-                 <el-menu-item index="1-1"><router-link to="/userList" tag="div">用户管理操作</router-link></el-menu-item>
-                 <el-menu-item index="1-2">用户登录日志</el-menu-item>
+                 <el-menu-item index="1-1"><router-link to="/backStage/userList" tag="div">用户管理操作</router-link></el-menu-item>
+                 <el-menu-item index="1-2"><router-link to="/backStage/shopMain" tag="div">用户登录日志</router-link></el-menu-item>
                </el-menu-item-group>
              </el-submenu>
            </el-menu>
@@ -31,7 +31,7 @@
              @close="handleClose">
              <el-submenu index="1">
                <template slot="title">
-                 <i class="el-icon-picture-outline"></i>
+                 <i class="iconfont icon-shuffling-banner"></i>
                  <span>Banner</span>
                </template>
                <el-menu-item-group>
@@ -73,7 +73,7 @@
         </el-header>
 
         <el-main>
-          <router-view name="UserList" content="UserLogin"></router-view>
+          <router-view />
         </el-main>
       </el-container>
     </el-container>
