@@ -9,10 +9,11 @@ import axios from 'axios'
 import swiper from "vue-awesome-swiper"
 import 'swiper/dist/css/swiper.css'
 import './assets/iconFont/iconfont.css'
-
+import  Globel from './Globel'
 Vue.use(element)
 Vue.use(swiper)
 Vue.prototype.$axios = axios
+Vue.prototype.Globel = Globel
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

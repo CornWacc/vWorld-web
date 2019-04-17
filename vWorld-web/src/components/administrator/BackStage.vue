@@ -3,9 +3,9 @@
     <el-container style="height: 100%; border: 1px solid #eee">
       <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
         <div class="aside-title">
-          <el-row>
+          <el-row >
             <el-col :span="10"><div class="aside-title-image"></div></el-col>
-            <el-col :span="8"><div class="aside-title-font">微世界</div></el-col>
+            <el-col :span="8"><div class="aside-title-font" @click="toMain">微世界</div></el-col>
           </el-row>
          <div class="menu">
            <el-menu
@@ -95,6 +95,10 @@
         },
         handleClose(key, keyPath) {
           console.log(key, keyPath);
+        },
+        toMain(){
+          console.log(1)
+          this.$router.push("/shopMain")
         }
       }
     }
@@ -131,6 +135,7 @@
   .aside-title-font{
     font-size: 20px;
     margin-top: 12px;
+    cursor: pointer;
   }
   .menu{
     margin-top: 20px;

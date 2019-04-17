@@ -32,12 +32,12 @@
           <el-col :span="6"><p class="password-title">密码:</p></el-col>
           <el-col :span="16">
               <el-form-item prop="userPassword">
-                <el-input v-model="form.userPassword" placeholder="请输入密码" suffix-icon="el-icon-caret-bottom" @keydown.native.enter="login"  show-password></el-input>
+                  <el-input v-model="form.userPassword" placeholder="请输入密码" suffix-icon="el-icon-caret-bottom" @keydown.native.enter="login"  show-password></el-input>
               </el-form-item>
           </el-col>
         </el-row>
         <el-button class="login" @click="login" round>登&nbsp陆</el-button>
-        <a class="toReg">还没有账号? 去注册➡️</a>
+        <a class="toReg" @click="toReg">还没有账号? 去注册➡️</a>
         </el-form>
       </div>
     </div>
@@ -100,7 +100,7 @@
                 headers:{
                   // "Access-Control-Allow-Origin":"*"
                 },
-                url:"http://192.168.2.25:8080/user/userLogin"
+                url:this.Globel.requestUrl+"/user/userLogin"
               }).then(res =>{
                 console.log(res)
                 if(res.data.object.status == "SUCCESS"){
@@ -117,6 +117,9 @@
             }
           })
 
+        },
+        toReg(){
+          this.$router.push("/reg")
         }
       }
     }

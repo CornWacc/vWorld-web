@@ -4,11 +4,12 @@
       <el-row style="display: block">
         <el-col :span="15"><div class="header-img"><p class="header-title">微世界</p></div></el-col>
         <el-col :span="7"><el-input class="header-search"    prefix-icon="el-icon-search" placeholder="搜索您想看的影片"></el-input></el-col>
-        <el-col :span="2"><el-dropdown type="primary" ><div class="header-user-head"></div>
+        <el-col :span="2"><el-dropdown type="primary"  @command="handleCommand" ><div class="header-user-head"></div>
         <el-dropdown-menu style="text-align: left">
           <!--<el-dropdown-item>登陆</el-dropdown-item>-->
           <el-dropdown-item>注销</el-dropdown-item>
           <el-dropdown-item>我的主页</el-dropdown-item>
+          <el-dropdown-item v-if="isAdmin" command="toBackStage">后台管理</el-dropdown-item>
           <el-dropdown-item>我的购物车</el-dropdown-item>
           <el-dropdown-item>历史订单信息</el-dropdown-item>
           <el-dropdown-item>历史观看记录</el-dropdown-item>
@@ -97,8 +98,29 @@
             ],
             videos:[
              "12a3","12a3"
-            ]
+            ],
+            isAdmin:false
         }
+      },
+      mounted() {
+          this.$axios({
+            url:this.Globel.requestUrl+"/user/userInfoQuery?userId="+localStorage.getItem("userId"),
+            method:"get",
+          }).then(res =>{
+            console.log(res.data.object.userRole)
+            if(res.data.object.userRole !== "BASIC" && res.data.object.userRole !== "VM"){
+              this.isAdmin = true
+            }
+          })
+      },
+      methods:{
+        handleCommand(c){
+          console.log(c)
+            if(c == "toBackStage"){
+              console.log(1)
+              this.$router.push("/backStage")
+            }
+          }
       }
     }
 </script>
