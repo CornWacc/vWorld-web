@@ -157,6 +157,7 @@
   .swiper-show{
     width: 100%;
     height: 410px;
+    margin-top: 60px;
     box-shadow: 4px 4px 4px rgba(0,0,0,0.1);
   }
   .banner{
@@ -170,7 +171,7 @@
     background-size: cover;
     position: relative;
     left: 60px;
-    top: 2px;
+    top: 22px;
   }
   .header-title{
     width: 100px;
@@ -195,7 +196,7 @@
   }
   .show-title-font{
     position: relative;
-
+    top: 15px;
   }
   .videos-free{
     width: 94%;
@@ -216,7 +217,7 @@
     height: 30px;
     border: 1px solid rebeccapurple;
     position: relative;
-    top: 10px;
+    /*top: 10px;*/
     left: 14px;
     background-size: cover;
   }
@@ -239,7 +240,7 @@
     margin-right: auto;
   }
   .video-create_time{
-    margin-top: -16px;
+    /*margin-top: -16px;*/
   }
   .el-row{
     width:100%

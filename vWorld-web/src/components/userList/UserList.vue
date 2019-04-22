@@ -12,7 +12,7 @@
             <el-col :span="5" class="doSearch" style="padding-left: 12px" ><el-button @click="doSearch">Search</el-button></el-col>
             <el-col :span="4" class="doExport" style="padding-left: 0px"><el-button>Export</el-button></el-col>
           </el-row>
-          <el-table :data="userList" style="width: 900px;max-width: none">
+          <el-table :data="userList" style="width: 100%;max-width: none">
             <el-table-column
             prop="userId"
             label="用户id"
@@ -150,13 +150,13 @@
     margin-top: 11px;
   }
   .right-module{
-    width: 114%;
+    width: 120%;
     height: 100%;
     margin-left: 12px;
     border:1px solid rgba(0, 0, 0, 0.3);
   }
   .user-tree{
-    box-shadow: 4px 4px 4px rgba(0,0,0,0.1);
+    /*box-shadow: 4px 4px 4px rgba(0,0,0,0.1);*/
   }
 
   .search{
