@@ -4,8 +4,8 @@ import Login from '@/components/user/Login'
 import BackStage from "@/components/administrator/BackStage"
 import UserList from "@/components/userList/UserLIst"
 import ShopMain from "@/components/main/ShopMain"
-import Reg from '@/components/user/reg'
-
+import Reg from '@/components/user/Reg'
+import RoleList from "@/components/role/RoleList"
 Vue.use(Router)
 
 
@@ -26,6 +26,11 @@ export default new Router({
           name:"UserList",
           component:UserList
         },
+        {
+          path:"roleList",
+          name:"roleList",
+          component:RoleList
+        }
       ]
     },
 
