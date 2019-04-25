@@ -95,10 +95,10 @@
           console.log(key, keyPath);
         },
         handleClose(key, keyPath) {
-          console.log(key, keyPath);
+          // console.log(key, keyPath);
         },
         toMain(){
-          console.log(1)
+          // console.log(1)
           this.$router.push("/shopMain")
         }
       }

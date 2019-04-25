@@ -20,10 +20,8 @@
     <div class="main">
       <div class="video-show">
         <div class="show-title">
-          <el-row>
-            <el-col :span="8"><div class="show-title-icon"></div></el-col>
-            <el-col :span="12"><p style="text-align: left" class="show-title-font">热播影片</p></el-col>
-          </el-row>
+          <div class="show-title-icon"></div>
+          <p  class="show-title-font">热播影片</p>
         </div>
         <swiper class="swiper-show" :options="swiperOption">
           <swiper-slide v-for="item in img" :key="item" data-swiper-autoplay="1000">
@@ -32,12 +30,9 @@
         </swiper>
       </div>
       <div class="videos-free">
-        <div class="video-list-title">
-          <el-row>
-            <el-col :span="8"><div class="video-list-title-icon"></div></el-col>
-            <el-col :span="16"><p class="video-list-title-font">免费在线影片</p>
-            </el-col>
-          </el-row>
+        <div class="show-title">
+          <div class="show-title-icon"></div>
+          <div class="show-title-font">免费在线影片</div>
         </div>
         <div class="video-list">
           <el-row :gutter="24">
@@ -51,12 +46,9 @@
 
       </div>
       <div class="videos-free">
-        <div class="video-list-title">
-          <el-row>
-            <el-col :span="8"><div class="video-list-title-icon"></div></el-col>
-            <el-col :span="11"><p class="video-list-title-font">付费影片</p>
-            </el-col>
-          </el-row>
+        <div class="show-title">
+            <div class="show-title-icon"></div>
+            <div class="show-title-font">付费影片</div>
         </div>
         <div class="video-list">
           <el-row :gutter="24">
@@ -157,7 +149,7 @@
   .swiper-show{
     width: 100%;
     height: 410px;
-    margin-top: 60px;
+    margin-top: 10px;
     box-shadow: 4px 4px 4px rgba(0,0,0,0.1);
   }
   .banner{
@@ -171,7 +163,7 @@
     background-size: cover;
     position: relative;
     left: 60px;
-    top: 22px;
+    /*top: 22px;*/
   }
   .header-title{
     width: 100px;
@@ -185,21 +177,28 @@
     width: 30px;
     height: 30px;
     border: 1px solid green;
-    position: relative;
-    top: 12px;
+    display: inline-block;
+    /*position: relative;*/
+    /*top: 12px;*/
     background-size: cover;
+    float: left;
 
   }
   .show-title{
-    width: 130px;
-    height: 0px;
+    /*width: 130px;*/
+    /*height: 0px;*/
+    position: relative;
+    /*padding-bottom: 1px;*/
+    overflow: hidden;
   }
   .show-title-font{
-    position: relative;
-    top: 15px;
+    position: absolute;
+    margin: 0px;
+    left: 40px;
+    bottom: 1px;
   }
   .videos-free{
-    width: 94%;
+    /*width: 94%;*/
     margin-left: auto;
     margin-right: auto;
     height: 400px;
@@ -226,7 +225,7 @@
     height: 80%;
     /*border: 1px solid red;*/
     display: flex;
-    margin-top: -30px;
+    /*margin-top: -30px;*/
   }
   .video{
     width: 100px;
