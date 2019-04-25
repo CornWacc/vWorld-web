@@ -90,7 +90,7 @@
       width="30%"
       :visible.sync="dialogVisible"
     >
-      <el-form label-width="80px" v-model="updateObj" :label-position="labelPosition">
+      <el-form label-width="80px"  :label-position="labelPosition">
         <el-form-item label="权限名称:">
           <el-input placeholder="请输入权限名称"></el-input>
         </el-form-item>
@@ -107,20 +107,20 @@
         <el-form-item label="一级权限:" v-if="createRoleLevel != 1 && createRoleLevel != ''">
           <el-select v-model="byTwoLevelRoleId" placeholder="请选择所属一级权限" style="width: 100%">
             <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
+              v-for="item in oneLevelOption"
+              :key="item.roleId"
+              :label="item.roleName"
+              :value="item.roleId">
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="二级权限:" v-if="createRoleLevel != 1 && createRoleLevel == 3">
+        <el-form-item label="二级权限:" v-if="createRoleLevel != 1 && createRoleLevel == 3 && byTwoLevelRoleId != ''">
           <el-select v-model="byThreeLevelRoleId" placeholder="请选择所属二级权限" style="width: 100%">
             <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
+              v-for="item in twoLevelOption"
+              :key="item.roleId"
+              :label="item.roleName"
+              :value="item.roleId">
             </el-option>
           </el-select>
         </el-form-item>
@@ -164,6 +164,9 @@
           value: '3',
           label: '等级3'
         }],
+        oneLevelOption:[],
+        twoLevelOption:[],
+        labelPosition:"left"
       }
     },
     mounted() {
@@ -174,6 +177,16 @@
         if (res.data.object.status == "SUCCESS") {
           this.roleListInfo = res.data.object.roleInfosList
           this.total = res.data.object.total
+        }
+      })
+      this.$axios({
+        url: this.Globel.requestUrl + "/role/roleListQueryByLevel?roleLevel=3",
+        method: "get"
+      }).then(res => {
+        if (res.data.object.status == "SUCCESS") {
+          console.log(res.data.object)
+          this.oneLevelOption = res.data.object.levelOneRoleList
+          this.twoLevelOption = res.data.object.levelTwoRoleList
         }
       })
     },
