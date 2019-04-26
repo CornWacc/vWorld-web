@@ -90,9 +90,9 @@
       width="30%"
       :visible.sync="dialogVisible"
     >
-      <el-form label-width="80px"  :label-position="labelPosition">
+      <el-form label-width="80px" :label-position="labelPosition">
         <el-form-item label="权限名称:">
-          <el-input placeholder="请输入权限名称"></el-input>
+          <el-input placeholder="请输入权限名称" v-model="createRoleName"></el-input>
         </el-form-item>
         <el-form-item label="权限等级:">
           <el-select v-model="createRoleLevel" placeholder="请选择等级" style="width: 100%">
@@ -105,7 +105,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="一级权限:" v-if="createRoleLevel != 1 && createRoleLevel != ''">
-          <el-select v-model="byTwoLevelRoleId" placeholder="请选择所属一级权限" style="width: 100%">
+          <el-select v-model="byOneLevelRoleId" placeholder="请选择所属一级权限" style="width: 100%" @change="selectChange">
             <el-option
               v-for="item in oneLevelOption"
               :key="item.roleId"
@@ -114,8 +114,8 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="二级权限:" v-if="createRoleLevel != 1 && createRoleLevel == 3 && byTwoLevelRoleId != ''">
-          <el-select v-model="byThreeLevelRoleId" placeholder="请选择所属二级权限" style="width: 100%">
+        <el-form-item label="二级权限:" v-if="createRoleLevel != 1 && createRoleLevel == 3 && byOneLevelRoleId != ''">
+          <el-select v-model="byTwoLevelRoleId" placeholder="请选择所属二级权限" style="width: 100%">
             <el-option
               v-for="item in twoLevelOption"
               :key="item.roleId"
@@ -127,7 +127,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
     <el-button @click="dialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+    <el-button type="primary" @click="addNewRole">确 定</el-button>
   </span>
     </el-dialog>
   </div>
@@ -150,10 +150,10 @@
         pageSize: "5",
         dialogVisible: false,
         createRoleName: "",
-        createRoleLevel:"",
+        createRoleLevel: "",
         createParentId: "",
+        byOneLevelRoleId: "",
         byTwoLevelRoleId: "",
-        byThreeLevelRoleId: "",
         chooseLevelOption: [{
           value: '1',
           label: '等级1'
@@ -164,9 +164,9 @@
           value: '3',
           label: '等级3'
         }],
-        oneLevelOption:[],
-        twoLevelOption:[],
-        labelPosition:"left"
+        oneLevelOption: [],
+        twoLevelOption: [],
+        labelPosition: "left"
       }
     },
     mounted() {
@@ -249,6 +249,70 @@
         this.pageNum = val;
         this.$axios({
           url: this.Globel.requestUrl + "/role/roleListQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize + "&byUserId=" + this.byUserId + "&roleLevel=" + this.roleLevel + "&createTime=" + startTime + "&endTime=" + endTime,
+          method: "get"
+        }).then(res => {
+          if (res.data.object.status == "SUCCESS") {
+            this.roleListInfo = res.data.object.roleInfosList
+            this.total = res.data.object.total
+          }
+        })
+      },
+      selectChange(r) {
+        this.byTwoLevelRoleId = ""
+        console.log(r)
+        this.$axios({
+          url: this.Globel.requestUrl + "/role/roleListQueryBySuperiorId?roleParentId=" + r,
+          method: "get"
+        }).then(res => {
+          console.log(res)
+          if (res.data.object.status == "SUCCESS") {
+            this.twoLevelOption = res.data.object.roleInfosList
+          }
+        })
+      },
+      addNewRole() {
+        var parentId = "1"
+        if (this.byOneLevelRoleId != '' && this.byOneLevelRoleId != null) {
+          parentId = this.byOneLevelRoleId
+        }
+        if (this.byTwoLevelRoleId != '' && this.byTwoLevelRoleId != null) {
+          parentId = this.byTwoLevelRoleId
+        }
+        this.$axios({
+          url: this.Globel.requestUrl + "/role/roleAdd",
+          data: {
+            roleName: this.createRoleName,
+            roleLevel: this.createRoleLevel,
+            roleParentId: parentId,
+            // byUserId:localStorage.getItem("userId")
+            byUserId: "usB6j0MLF6FikEwi"
+          },
+
+          method: "post"
+        }).then(res => {
+          console.log(res)
+          if (res.data.object.status == "SUCCESS") {
+            this.dialogVisible = false
+            this.createRoleName = ""
+            this.createRoleLevel = ""
+            this.createParentId = ""
+            this.byOneLevelRoleId = ""
+            this.byTwoLevelRoleId = ""
+            this.$axios({
+              url: this.Globel.requestUrl + "/role/roleListQueryByLevel?roleLevel=3",
+              method: "get"
+            }).then(res => {
+              if (res.data.object.status == "SUCCESS") {
+                console.log(res.data.object)
+                this.oneLevelOption = res.data.object.levelOneRoleList
+                this.twoLevelOption = res.data.object.levelTwoRoleList
+              }
+            })
+          }
+        })
+
+        this.$axios({
+          url: this.Globel.requestUrl + "/role/roleListQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize,
           method: "get"
         }).then(res => {
           if (res.data.object.status == "SUCCESS") {
