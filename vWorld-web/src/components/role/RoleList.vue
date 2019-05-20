@@ -65,7 +65,7 @@
               </el-button>
             </el-col>
             <el-col>
-              <el-button size="mini" @click="delUser(scope.row.roleId ,scope.$index)" type="danger"
+              <el-button size="mini" @click="delRole(scope.row.roleId ,scope.$index)" type="danger"
               >删除
               </el-button>
             </el-col>
@@ -319,6 +319,26 @@
             this.roleListInfo = res.data.object.roleInfosList
             this.total = res.data.object.total
           }
+        })
+      },
+      delRole(roleId,index){
+        this.$axios({
+          url:this.Globel.requestUrl+"/role/roleDel",
+          method:"post",
+          data:{
+            roleId:roleId
+          }
+        }).then(res => {
+          console.log(res)
+          this.$axios({
+            url: this.Globel.requestUrl + "/role/roleListQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize,
+            method: "get"
+          }).then(res => {
+            if (res.data.object.status == "SUCCESS") {
+              this.roleListInfo = res.data.object.roleInfosList
+              this.total = res.data.object.total
+            }
+          })
         })
       }
     }
