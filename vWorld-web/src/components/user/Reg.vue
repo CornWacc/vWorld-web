@@ -11,28 +11,28 @@
       <el-form ref="form" status-icon :model="form" :rules="rules">
       <div class="user-info">
         <el-row class="reg-input">
-          <el-col :span="4"><span class="userBase-title">用户名:</span></el-col>
+          <el-col :span="6"><span class="userBase-title">用户名:</span></el-col>
           <el-col :span="12"><el-form-item prop="userName"><el-input v-model="form.userName" class="userBase-input" placeholder="请输入用户名"></el-input></el-form-item></el-col>
         </el-row>
 
         <el-row class="reg-input">
-          <el-col :span="4"><span class="userBase-title">账&nbsp&nbsp&nbsp&nbsp号:</span></el-col>
+          <el-col :span="6"><span class="userBase-title">账&nbsp&nbsp&nbsp&nbsp号:</span></el-col>
           <el-col :span="12"><el-form-item prop="userAccount"><el-input v-model="form.userAccount" class="userBase-input" placeholder="请输入登陆账号"></el-input></el-form-item></el-col>
         </el-row>
         <el-row class="reg-input">
-          <el-col :span="4"><span class="userBase-title">密&nbsp&nbsp&nbsp&nbsp码:</span></el-col>
+          <el-col :span="6"><span class="userBase-title">密&nbsp&nbsp&nbsp&nbsp码:</span></el-col>
           <el-col :span="12"><el-form-item prop="userPassword"><el-input v-model="form.userPassword" class="userBase-input" placeholder="请输入登陆密码" show-password ></el-input></el-form-item></el-col>
         </el-row>
         <el-row class="reg-input">
-          <el-col :span="4"><span class="userBase-title">确认密码:</span></el-col>
+          <el-col :span="6"><span class="userBase-title">确认密码:</span></el-col>
           <el-col :span="12"><el-form-item prop="surePassword"><el-input v-model="form.surePassword" class="userBase-input" placeholder="请确认登陆密码" show-password></el-input></el-form-item></el-col>
         </el-row>
         <el-row class="reg-input">
-          <el-col :span="4"><span class="userBase-title">邮&nbsp&nbsp&nbsp&nbsp箱:</span></el-col>
+          <el-col :span="6"><span class="userBase-title">邮&nbsp&nbsp&nbsp&nbsp箱:</span></el-col>
           <el-col :span="12"><el-form-item prop="userEmail"><el-input v-model="form.userEmail" class="userBase-input" placeholder="请输入注册邮箱"></el-input></el-form-item></el-col>
         </el-row>
         <el-row class="reg-input">
-          <el-col :span="4"><span class="userBase-title">手机号:</span></el-col>
+          <el-col :span="6"><span class="userBase-title">手机号:</span></el-col>
           <el-col :span="12"><el-form-item prop="userPhone"><el-input v-model="form.userPhone" class="userBase-input" placeholder="请输入注册手机号"></el-input></el-form-item></el-col>
         </el-row>
 
@@ -192,11 +192,11 @@
   .user-info{
     width: 100%;
     /*border: 1px solid green;*/
-    margin-top: 10px;
+    margin-top: 20px;
   }
   .reg-input{
     margin-top: 14px;
-    margin-left: 36px;
+    /*margin-left: 36px;*/
   }
   .userBase-input{
     width: 330px;

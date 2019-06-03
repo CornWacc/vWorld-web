@@ -6,13 +6,13 @@
       <el-input class="input" v-model="roleLevel" placeholder="权限等级" style="width: 120px"></el-input>
       <el-date-picker
         v-model="time"
-        type="daterange"
+        type="datetimerange"
         align="right"
         unlink-panels
         range-separator="至"
         start-placeholder="开始日期"
         end-placeholder="结束日期"
-        value-format="yyyy-MM-dd"
+        value-format="yyyy-MM-dd HH:mm:ss"
       >
       </el-date-picker>
       <el-button @click="doSearch" style="margin-left: 6px;margin-right: 6px">Search</el-button>
@@ -171,7 +171,7 @@
     },
     mounted() {
       this.$axios({
-        url: this.Globel.requestUrl + "/role/roleListQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize,
+        url: this.Globel.requestUrl + "/role/roleListPageQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize,
         method: "get"
       }).then(res => {
         if (res.data.object.status == "SUCCESS") {
@@ -198,73 +198,94 @@
         if (null != this.time && '' != this.time) {
           startTime = this.time[0];
           endTime = this.time[1];
+          this.$axios({
+            url: this.Globel.requestUrl + "/role/roleListPageQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize + "&byUserId=" + this.byUserId + "&roleLevel=" + this.roleLevel + "&createTime=" + startTime + "&endTime=" + endTime,
+            method: "get"
+          }).then(res => {
+            if (res.data.object.status == "SUCCESS") {
+              this.roleListInfo = res.data.object.roleInfosList
+              this.total = res.data.object.total
+            } else {
+              this.roleListInfo = []
+            }
+          })
         } else {
-          startTime = "";
-          endTime = ""
+          this.$axios({
+            url: this.Globel.requestUrl + "/role/roleListPageQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize + "&byUserId=" + this.byUserId + "&roleLevel=" + this.roleLevel,
+            method: "get"
+          }).then(res => {
+            if (res.data.object.status == "SUCCESS") {
+              this.roleListInfo = res.data.object.roleInfosList
+              this.total = res.data.object.total
+            } else {
+              this.roleListInfo = []
+            }
+          })
         }
-        this.$axios({
-          url: this.Globel.requestUrl + "/role/roleListQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize + "&byUserId=" + this.byUserId + "&roleLevel=" + this.roleLevel + "&createTime=" + startTime + "&endTime=" + endTime,
-          method: "get"
-        }).then(res => {
-          if (res.data.object.status == "SUCCESS") {
-            this.roleListInfo = res.data.object.roleInfosList
-            this.total = res.data.object.total
-          } else {
-            this.roleListInfo = []
-          }
-        })
+
       },
       handleSizeChange(val) {
         var startTime;
         var endTime;
+        this.pageSize = val;
         if (null != this.time && '' != this.time) {
+          console.log(this.time)
           startTime = this.time[0];
           endTime = this.time[1];
+          this.$axios({
+            url: this.Globel.requestUrl + "/role/roleListPageQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize + "&byUserId=" + this.byUserId + "&roleLevel=" + this.roleLevel + "&createTime=" + startTime + "&endTime=" + endTime,
+            method: "get"
+          }).then(res => {
+            if (res.data.object.status == "SUCCESS") {
+              this.roleListInfo = res.data.object.roleInfosList
+              this.total = res.data.object.total
+            }
+          })
         } else {
-          startTime = "";
-          endTime = ""
+          this.$axios({
+            url: this.Globel.requestUrl + "/role/roleListPageQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize + "&byUserId=" + this.byUserId + "&roleLevel=" + this.roleLeve,
+            method: "get"
+          }).then(res => {
+            if (res.data.object.status == "SUCCESS") {
+              this.roleListInfo = res.data.object.roleInfosList
+              this.total = res.data.object.total
+            }
+          })
         }
-        this.pageSize = val;
-        this.$axios({
-          url: this.Globel.requestUrl + "/role/roleListQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize + "&byUserId=" + this.byUserId + "&roleLevel=" + this.roleLevel + "&createTime=" + startTime + "&endTime=" + endTime,
-          method: "get"
-        }).then(res => {
-          if (res.data.object.status == "SUCCESS") {
-            this.roleListInfo = res.data.object.roleInfosList
-            this.total = res.data.object.total
-          }
-        })
-
       },
       handleCurrentChange(val) {
         var startTime;
         var endTime;
-        if (null != this.time && '' != this.time) {
-          startTime = this.time[0];
-          endTime = this.time[1];
-        } else {
-          startTime = "";
-          endTime = ""
-        }
         this.pageNum = val;
-        this.$axios({
-          url: this.Globel.requestUrl + "/role/roleListQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize + "&byUserId=" + this.byUserId + "&roleLevel=" + this.roleLevel + "&createTime=" + startTime + "&endTime=" + endTime,
-          method: "get"
-        }).then(res => {
-          if (res.data.object.status == "SUCCESS") {
-            this.roleListInfo = res.data.object.roleInfosList
-            this.total = res.data.object.total
-          }
-        })
+        if (null != this.time && '' != this.time) {
+          this.$axios({
+            url: this.Globel.requestUrl + "/role/roleListPageQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize + "&byUserId=" + this.byUserId + "&roleLevel=" + this.roleLevel + "&createTime=" + startTime + "&endTime=" + endTime,
+            method: "get"
+          }).then(res => {
+            if (res.data.object.status == "SUCCESS") {
+              this.roleListInfo = res.data.object.roleInfosList
+              this.total = res.data.object.total
+            }
+          })
+        } else {
+          this.$axios({
+            url: this.Globel.requestUrl + "/role/roleListPageQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize + "&byUserId=" + this.byUserId + "&roleLevel=" + this.roleLevel,
+            method: "get"
+          }).then(res => {
+            if (res.data.object.status == "SUCCESS") {
+              this.roleListInfo = res.data.object.roleInfosList
+              this.total = res.data.object.total
+            }
+          })
+        }
+
       },
       selectChange(r) {
         this.byTwoLevelRoleId = ""
-        console.log(r)
         this.$axios({
           url: this.Globel.requestUrl + "/role/roleListQueryBySuperiorId?roleParentId=" + r,
           method: "get"
         }).then(res => {
-          console.log(res)
           if (res.data.object.status == "SUCCESS") {
             this.twoLevelOption = res.data.object.roleInfosList
           }
@@ -290,7 +311,6 @@
 
           method: "post"
         }).then(res => {
-          console.log(res)
           if (res.data.object.status == "SUCCESS") {
             this.dialogVisible = false
             this.createRoleName = ""
@@ -303,35 +323,36 @@
               method: "get"
             }).then(res => {
               if (res.data.object.status == "SUCCESS") {
-                console.log(res.data.object)
                 this.oneLevelOption = res.data.object.levelOneRoleList
                 this.twoLevelOption = res.data.object.levelTwoRoleList
+                this.$axios({
+                  url: this.Globel.requestUrl + "/role/roleListPageQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize,
+                  method: "get"
+                }).then(res => {
+                  if (res.data.object.status == "SUCCESS") {
+                    this.roleListInfo = res.data.object.roleInfosList
+                    console.log(res)
+                    this.total = res.data.object.total
+                  }
+                })
               }
             })
           }
         })
 
-        this.$axios({
-          url: this.Globel.requestUrl + "/role/roleListQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize,
-          method: "get"
-        }).then(res => {
-          if (res.data.object.status == "SUCCESS") {
-            this.roleListInfo = res.data.object.roleInfosList
-            this.total = res.data.object.total
-          }
-        })
+
       },
-      delRole(roleId,index){
+      delRole(roleId, index) {
         this.$axios({
-          url:this.Globel.requestUrl+"/role/roleDel",
-          method:"post",
-          data:{
-            roleId:roleId
+          url: this.Globel.requestUrl + "/role/roleDel",
+          method: "post",
+          data: {
+            roleId: roleId
           }
         }).then(res => {
           console.log(res)
           this.$axios({
-            url: this.Globel.requestUrl + "/role/roleListQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize,
+            url: this.Globel.requestUrl + "/role/roleListPageQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize,
             method: "get"
           }).then(res => {
             if (res.data.object.status == "SUCCESS") {

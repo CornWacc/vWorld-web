@@ -107,7 +107,7 @@
                   //登陆成功后设置token
                   localStorage.setItem("userToken",res.data.object.userToken)
                   localStorage.setItem("userId",res.data.object.userId)
-                  this.$router.push("/shopMain")
+                  this.$router.push("/main")
                 }else{
                   this.$alert(res.data.object.message,"错误",{
                     confirmButtonText: '确定',

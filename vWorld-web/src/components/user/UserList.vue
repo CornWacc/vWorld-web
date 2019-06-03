@@ -3,7 +3,7 @@
     <el-row>
       <el-col :span="5">
         <div class="left-module">
-          <el-tree class="user-tree" :data="data" :default-expanded-keys="[1,2]" node-key="id">
+          <el-tree class="user-tree" :data="data"   node-key="roleId" :props="defaultProps" 	>
           </el-tree>
         </div>
       </el-col>
@@ -11,13 +11,14 @@
         <div class="right-moudle">
           <el-form :inline="inline" class="search">
             <el-input class="input-keyWord" v-model="keyWord" placeholder="名称/手机号/邮箱"></el-input>
-            <el-button @click="doSearch" style="margin-left: 10px">Search</el-button>
-            <el-button>Export</el-button>
+            <el-button @click="doSearch" style="margin-left: 10px">搜索</el-button>
+            <el-button>导出</el-button>
           </el-form>
           <el-table :data="userList" style="width: 100%;max-width: none">
             <el-table-column
               prop="userId"
-              label="用户id">
+              label="用户id"
+            width="160">
             </el-table-column>
             <el-table-column
               prop="userName"
@@ -37,18 +38,17 @@
             </el-table-column>
             <el-table-column
               prop="createTime"
-              label="注册时间">
+              label="注册时间"
+            width="150px">
             </el-table-column>
             <el-table-column
               prop="userStatus"
               label="状态"
+              width="80px"
             >
               <template slot-scope="scope">
-                <el-switch
-                  v-model="scope.row.userStatus"
-                  active-color="#13ce66"
-                  inactive-color="orange">
-                </el-switch>
+                <el-tag v-if="scope.row.userStatus == '开启'">{{scope.row.userStatus}}</el-tag>
+                <el-tag v-else type="danger">{{scope.row.userStatus}}</el-tag>
               </template>
             </el-table-column>
             <el-table-column
@@ -57,13 +57,14 @@
               <template slot-scope="scope">
                 <el-row>
                   <el-col>
-                    <el-button size="mini" @click="delUser(scope.row.userId,scope.$index)" type="danger"
-                               style="margin-bottom: 4px">删除
-                    </el-button>
-                  </el-col>
-                  <el-col>
                     <el-button size="mini" type="primary" @click="dialogVisible = true">编辑</el-button>
                   </el-col>
+                  <el-col>
+                    <el-button size="mini" @click="delUser(scope.row.userId,scope.$index)" type="danger"
+                               style="margin-top: 8px">删除
+                    </el-button>
+                  </el-col>
+
                 </el-row>
               </template>
             </el-table-column>
@@ -144,6 +145,10 @@
                 label: "Vw用户"
               }]
           }],
+        defaultProps:{
+          children:"children",
+          label:"roleName"
+        },
 
         selectedOptions: [],
         userList: [],
@@ -239,10 +244,15 @@
         url: this.Globel.requestUrl + "/user/userListPageQuery?type=" + this.keyWordType + "&keyWord=" + this.keyWord + "&pageNum=" + this.pageNum + "&pageSize=5",
         method: "get"
       }).then(res => {
-        console.log(res)
         this.userList = res.data.object.userInfoList
         this.total = res.data.object.total
-        console.log(this.pages)
+      })
+
+      this.$axios({
+        url: this.Globel.requestUrl + "/role/roleListTreeQuery",
+        method: "get"
+      }).then(res => {
+        this.data = res.data.object.roleInfos
       })
     }
     ,

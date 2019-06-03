@@ -2,10 +2,11 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '@/components/user/Login'
 import BackStage from "@/components/administrator/BackStage"
-import UserList from "@/components/userList/UserList"
-import ShopMain from "@/components/main/ShopMain"
+import UserList from "@/components/user/UserList"
+import Main from "@/components/main/Main"
 import Reg from '@/components/user/Reg'
 import RoleList from "@/components/role/RoleList"
+import ProductMainBanner from '@/components/banner/ProductMainBannerBackStage'
 Vue.use(Router)
 
 
@@ -30,14 +31,18 @@ export default new Router({
           path:"roleList",
           name:"roleList",
           component:RoleList
+        },{
+          path:"productMainBanner",
+          name:"productMainBanner",
+          component:ProductMainBanner
         }
       ]
     },
 
     {
-      path:"/shopMain",
-      name:"ShopMain",
-      component:ShopMain
+      path:"/main",
+      name:"Main",
+      component:Main
     },
 
     {

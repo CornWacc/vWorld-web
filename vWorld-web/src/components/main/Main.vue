@@ -7,7 +7,7 @@
         <el-col :span="2"><el-dropdown type="primary"  @command="handleCommand" ><div class="header-user-head"></div>
         <el-dropdown-menu style="text-align: left">
           <!--<el-dropdown-item>登陆</el-dropdown-item>-->
-          <el-dropdown-item>注销</el-dropdown-item>
+          <el-dropdown-item command="logOut">注销</el-dropdown-item>
           <el-dropdown-item>我的主页</el-dropdown-item>
           <el-dropdown-item v-if="isAdmin" command="toBackStage">后台管理</el-dropdown-item>
           <el-dropdown-item>我的购物车</el-dropdown-item>
@@ -91,7 +91,7 @@
             videos:[
              "12a3","12a3"
             ],
-            isAdmin:false
+            isAdmin:false //是否为管理员
         }
       },
       mounted() {
@@ -109,10 +109,23 @@
         handleCommand(c){
           console.log(c)
             if(c == "toBackStage"){
-              console.log(1)
+
               this.$router.push("/backStage")
             }
-          }
+            if(c == "logOut"){
+
+              this.$axios({
+                url:this.Globel.requestUrl+"/user/userLogOut?userId="+localStorage.getItem("userId"),
+                method:"GET"
+              }).then(res =>{
+
+                if(res.data.object.status == "SUCCESS"){
+                  localStorage.clear()
+                  this.$router.push("/")
+                }
+              })
+            }
+          },
       }
     }
 </script>

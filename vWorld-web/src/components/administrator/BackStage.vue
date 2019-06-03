@@ -36,8 +36,8 @@
                  <span>Banner</span>
                </template>
                <el-menu-item-group>
-                 <el-menu-item index="1-1">商品主页广告</el-menu-item>
-                 <el-menu-item index="1-2">登陆主页广告</el-menu-item>
+                 <el-menu-item index="1-1"><router-link to="/backStage/productMainBanner" tag="div">商品主页广告</router-link></el-menu-item>
+                 <el-menu-item index="1-2"><router-link to="/backStage/" tag="div">登陆主页广告</router-link></el-menu-item>
                </el-menu-item-group>
              </el-submenu>
            </el-menu>
@@ -98,8 +98,7 @@
           // console.log(key, keyPath);
         },
         toMain(){
-          // console.log(1)
-          this.$router.push("/shopMain")
+          this.$router.push("/main")
         }
       }
     }
