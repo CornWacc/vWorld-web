@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <el-form class="search" :inline="inline">
-      <el-select class="search_banner_status" clearable v-model="chooseBannerStatus"  placeholder="请选择banner状态">
+      <el-select class="search_banner_status" clearable v-model="chooseBannerStatus" placeholder="请选择banner状态">
         <el-option
           v-for="item in bannerStatusList"
           :key="item.code"
@@ -107,6 +107,16 @@
         <el-form-item label="跳转路径:">
           <el-input></el-input>
         </el-form-item>
+        <el-form-item label="上传类型:">
+          <el-select style="width: 100%" placeholder="请选择banner上传类型" v-model="chooseUploadType">
+            <el-option
+              v-for="item in uploadTypes"
+              :key="item.code"
+              :label="item.msg"
+              :value="item.code">
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="权重:">
           <el-input></el-input>
         </el-form-item>
@@ -117,11 +127,32 @@
             inactive-color="#ff4949">
           </el-switch>
         </el-form-item>
+        <el-form-item label="图片">
+          <el-upload
+                     action="http://up.qiniup.com"
+                     list-type="picture-card"
+                     :on-preview="handlePictureCardPreview"
+                     :on-remove="handleRemove"
+                     :data="qiNiuUploadData"
+                     :on-success="handleUploadSuccess"
+                     :on-exceed="handleUploadFileOutOfBounds"
+                     :limit="1">
+            <i class="el-icon-plus"></i>
+          </el-upload>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
     <el-button @click="dialogVisible = false">取 消</el-button>
     <el-button type="primary" @click="addNewBanner">确 定</el-button>
   </span>
+    </el-dialog>
+    <el-pagination
+      background
+      layout="prev, pager, next"
+      :total="total" style="margin-top: 30px" :page-size="5" @current-change="pageChange">
+    </el-pagination>
+    <el-dialog :visible.sync="uploadBannerIsShow">
+      <img width="100%" :src="uploadBannerShowUrl" alt="">
     </el-dialog>
   </div>
 
@@ -140,19 +171,36 @@
         ruleForm: {},
         chooseBannerStatus: "", //选择的广告状态
         bannerList: [],
-        bannerStatusList:[
+        bannerStatusList: [
 
           {
-            code:"OPEN",
-            msg:"开启"
+            code: "OPEN",
+            msg: "开启"
           },
           {
-            code:"CLOSE",
-            msg:"关闭"
+            code: "CLOSE",
+            msg: "关闭"
           }
         ],
-        pageNum:1,
-        pageSize:10
+        uploadTypes: [
+          {
+            code: "OUTSIDE",
+            msg: "外链"
+          },
+          {
+            code: "LOCAL",
+            msg: "本地选择"
+          }
+        ],
+        chooseUploadType: "",
+        pageNum: 1,
+        pageSize: 10,
+        total: 0,
+        qiNiuUploadData: {
+          token: ""
+        },
+        uploadBannerIsShow: false,
+        uploadBannerShowUrl: "",
       }
     },
     mounted() {
@@ -162,8 +210,16 @@
       }).then(res => {
         console.log(res)
         if (res.data.object.status == this.Globel.defaultRequestStatus) {
-          this.bannerList = res.data.object.pageEntity.pageList
+          this.bannerList = res.data.object.pageEntity.pageList;
+          this.total = res.data.object.pageEntity.total;
         }
+      })
+      this.$axios({
+        url: this.Globel.requestUrl + "/getQiNiuToken",
+        method: "GET"
+      }).then(res => {
+        console.log(res);
+        this.qiNiuUploadData.token = res.data.msg
       })
     },
     methods: {
@@ -173,20 +229,61 @@
       doSearch() {
         var startTime = "";
         var endTime = "";
-        if(this.time != null){
+        if (this.time != null) {
           startTime = this.time[0];
           endTime = this.time[1];
         }
         // console.log(this.chooseBannerStatus)
         this.$axios({
-          url:this.Globel.requestUrl+"/banner/mainBannerListPageQuery?pageNum="+this.pageNum+"&pageSize="+this.pageSize+"&startTime="+startTime+"&endTime="+endTime+"&mainBannerStatus="+this.chooseBannerStatus,
-          method:"GET"
-        }).then(res =>{
-          if(res.data.object.status == this.Globel.defaultRequestStatus){
+          url: this.Globel.requestUrl + "/banner/mainBannerListPageQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize + "&startTime=" + startTime + "&endTime=" + endTime + "&mainBannerStatus=" + this.chooseBannerStatus,
+          method: "GET"
+        }).then(res => {
+          if (res.data.object.status == this.Globel.defaultRequestStatus) {
             this.bannerList = res.data.object.pageEntity.pageList
+            this.total = res.data.object.pageEntity.total;
           }
         })
+      },
+      pageChange(pageNum) {
+        console.log(pageNum)
+        this.pageNum = pageNum;
+        var startTime = "";
+        var endTime = "";
+        if (this.time != null) {
+          startTime = this.time[0];
+          endTime = this.time[1];
+        }
+        // console.log(this.chooseBannerStatus)
+        this.$axios({
+          url: this.Globel.requestUrl + "/banner/mainBannerListPageQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize + "&startTime=" + startTime + "&endTime=" + endTime + "&mainBannerStatus=" + this.chooseBannerStatus,
+          method: "GET"
+        }).then(res => {
+          if (res.data.object.status == this.Globel.defaultRequestStatus) {
+            this.bannerList = res.data.object.pageEntity.pageList
+            this.total = res.data.object.pageEntity.total;
+          }
+        })
+      },
+      handleRemove(file, fileList) {
+        console.log(file, fileList);
+      },
+      handlePictureCardPreview(file) {
+        console.log(file)
+        this.uploadBannerIsShow = true
+        this.uploadBannerShowUrl = file.url;
+      },
+      //banner上传成功时
+      handleUploadSuccess() {
+
+      },
+      //超过一张选择的banner时
+      handleUploadFileOutOfBounds(){
+        this.$message({
+          showClose: true,
+          message: '一次只能选择一张进行上传'
+        });
       }
+
     }
   }
 </script>
