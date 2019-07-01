@@ -7,9 +7,19 @@
       </el-row>
     </el-header>
     <div class="reg-all">
-      <div class="avatar"><span v-if="isChooseAvatar" class="avatar-title"></span><span v-else class="avatar-title">选择头像</span></div>
       <el-form ref="form" status-icon :model="form" :rules="rules">
       <div class="user-info">
+        <el-upload
+          class="avatar-uploader"
+          :action="this.Globel.qiNiuUploadUrl"
+          :show-file-list="false"
+          :data="this.qiNiuUploadData"
+          :on-success="handleAvatarSuccess"
+          :before-upload="beforeAvatarUpload">
+          <img v-if="showAvatar" :src="showAvatar" class="avatar">
+          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+        </el-upload>
+
         <el-row class="reg-input">
           <el-col :span="6"><span class="userBase-title">用户名:</span></el-col>
           <el-col :span="12"><el-form-item prop="userName"><el-input v-model="form.userName" class="userBase-input" placeholder="请输入用户名"></el-input></el-form-item></el-col>
@@ -57,14 +67,15 @@
           }
         };
           return {
-            isChooseAvatar:false,
+            showAvatar:"",//展示的头像地址
             form:{
               userAccount:"",
               userPassword:"",
               surePassword:"",
               userName:"",
               userEmail:"",
-              userPhone:""
+              userPhone:"",
+              userAvatar:""
             },
             rules:{
               userName:[
@@ -92,7 +103,18 @@
               ]
             },
 
+            qiNiuUploadData:{
+              token:""
+            }
           }
+      },
+      mounted(){
+        this.$axios({
+          url: this.Globel.requestUrl + "/getQiNiuToken",
+          method: "GET"
+        }).then(res => {
+          this.qiNiuUploadData.token = res.data.msg
+        })
       },
       methods:{
           reg(){
@@ -100,14 +122,14 @@
               if(valid){
                 this.$axios({
                   url:this.Globel.requestUrl+"/user/userReg",
-                  data:{
-                    userName:this.form.userName,
-                    userAccount:this.form.userAccount,
-                    userPassword:this.form.userPassword,
-                    userPhone:this.form.userPhone,
-                    userEmail:this.form.userEmail,
-                    userAvatar:"暂无"
-                  },
+                  data:this.form
+                    // userName:this.form.userName,
+                    // userAccount:this.form.userAccount,
+                    // userPassword:this.form.userPassword,
+                    // userPhone:this.form.userPhone,
+                    // userEmail:this.form.userEmail,
+                    // userAvatar:"暂无"
+                  ,
                   method: "post"
                 }).then(res => {
                     console.log(res)
@@ -127,6 +149,23 @@
           },
         toLogin(){
           this.$router.push("/")
+        },
+        handleAvatarSuccess(res, file) {
+          console.log(res,file)
+          this.form.userAvatar = res.hash
+          this.showAvatar = URL.createObjectURL(file.raw);
+        },
+        beforeAvatarUpload(file) {
+          const isJPG = file.type === 'image/jpeg';
+          const isLt2M = file.size / 1024 / 1024 < 2;
+
+          if (!isJPG) {
+            this.$message.error('上传头像图片只能是 JPG 格式!');
+          }
+          if (!isLt2M) {
+            this.$message.error('上传头像图片大小不能超过 2MB!');
+          }
+          return isJPG && isLt2M;
         }
       }
     }
@@ -138,7 +177,6 @@
     margin-left: auto;
     margin-right: auto;
     width:40%;
-    height: 100%;
     border:1px solid rgba(0,0,0,0.1);
     box-shadow: 4px 4px 4px rgba(0,0,0,0.1);
   }
@@ -171,7 +209,7 @@
   }
   .reg-all{
     width: 100%;
-    height: 100%;
+    display: block;
     /*min-height: 900px;*/
   }
   .avatar{
@@ -184,19 +222,16 @@
     box-shadow: 6px 6px 6px rgba(0,0,0,0.1);
     margin-top: 18px;
     line-height: 90px;
+    cursor: pointer !important;
   }
-  .avatar-title{
-    font-size: 14px;
-    cursor:pointer;
-  }
+
   .user-info{
     width: 100%;
-    /*border: 1px solid green;*/
     margin-top: 20px;
+    display: inline-block;
   }
   .reg-input{
     margin-top: 14px;
-    /*margin-left: 36px;*/
   }
   .userBase-input{
     width: 330px;
@@ -209,5 +244,30 @@
     margin-top: 10px;
     width: 140px;
     box-shadow: 6px 6px 6px rgba(0,0,0,0.1);
+    margin-bottom: 10px;
+  }
+
+  .user-info >>> .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 128px;
+    height: 128px;
+    display: block;
   }
 </style>

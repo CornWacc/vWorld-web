@@ -97,18 +97,19 @@
     </el-table>
     <el-dialog
       title="新增主页Banner"
-      width="30%"
+      width="34%"
       :visible.sync="dialogVisible"
+      @close="dialogClose"
     >
-      <el-form :model="ruleForm" label-width="80px" :label-position="labelPosition">
-        <el-form-item label="图片名称:">
-          <el-input></el-input>
+      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" :label-position="labelPosition">
+        <el-form-item label="图片名称:" prop="addImageName">
+          <el-input v-model="ruleForm.addImageName"></el-input>
         </el-form-item>
         <el-form-item label="跳转路径:">
-          <el-input></el-input>
+          <el-input v-model="ruleForm.addSkipUrl"></el-input>
         </el-form-item>
         <el-form-item label="上传类型:">
-          <el-select style="width: 100%" placeholder="请选择banner上传类型" v-model="chooseUploadType">
+          <el-select style="width: 100%" placeholder="请选择banner上传类型" clearable v-model="ruleForm.addUploadType">
             <el-option
               v-for="item in uploadTypes"
               :key="item.code"
@@ -117,32 +118,45 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="权重:">
-          <el-input></el-input>
+        <el-form-item label="图片地址:" v-if="ruleForm.addUploadType == 'OUTSIDE'" required>
+          <el-input v-model="ruleForm.addImageUrl"></el-input>
         </el-form-item>
-        <el-form-item label="状态:">
+        <el-form-item label="权重:" prop="addWeight">
+          <el-select style="width: 100%" placeholder="请选择banner权重" clearable v-model="ruleForm.addWeight">
+            <el-option
+              v-for="item in bannerWeights"
+              :key="item.code"
+              :label="item.msg"
+              :value="item.code">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="状态:" prop="addWeight">
           <el-switch
             v-model="inline"
             active-color="#13ce66"
-            inactive-color="#ff4949">
+            inactive-color="#ff4949"
+            @change="statusChange">
           </el-switch>
         </el-form-item>
-        <el-form-item label="图片">
+        <el-form-item label="图片" v-if="ruleForm.addUploadType == 'LOCAL'"
+        >
           <el-upload
-                     action="http://up.qiniup.com"
-                     list-type="picture-card"
-                     :on-preview="handlePictureCardPreview"
-                     :on-remove="handleRemove"
-                     :data="qiNiuUploadData"
-                     :on-success="handleUploadSuccess"
-                     :on-exceed="handleUploadFileOutOfBounds"
-                     :limit="1">
+            :action="this.Globel.qiNiuUploadUrl"
+            list-type="picture-card"
+            :on-preview="handlePictureCardPreview"
+            :on-remove="handleRemove"
+            :data="qiNiuUploadData"
+            :on-success="handleUploadSuccess"
+            :on-exceed="handleUploadFileOutOfBounds"
+            :limit="1">
             <i class="el-icon-plus"></i>
+
           </el-upload>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-    <el-button @click="dialogVisible = false">取 消</el-button>
+    <el-button @click="cancelNewBanner">取 消</el-button>
     <el-button type="primary" @click="addNewBanner">确 定</el-button>
   </span>
     </el-dialog>
@@ -151,9 +165,11 @@
       layout="prev, pager, next"
       :total="total" style="margin-top: 30px" :page-size="5" @current-change="pageChange">
     </el-pagination>
+
     <el-dialog :visible.sync="uploadBannerIsShow">
       <img width="100%" :src="uploadBannerShowUrl" alt="">
     </el-dialog>
+
   </div>
 
 
@@ -164,11 +180,27 @@
     name: "ProductMainBannerBackStage",
     data() {
       return {
-        inline: true,
+        inline: false,
         time: null,
         dialogVisible: false,
         labelPosition: "left",
-        ruleForm: {},
+        ruleForm: {
+          addImageName: "",//新增图片名称
+          addSkipUrl: "",//新增跳转url
+          addUploadType: "",//新增图片上传类型
+          addImageUrl: "",//新增图片地址,
+          addWeight: "",//权重
+        },
+        rules: {
+          addImageName: [
+            {required: true, message: '请输入Banner名称', trigger: 'blur'},
+            {min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur'}
+          ],
+          addWeight: [
+            {required: true, message: '请选择权重', trigger: 'blur'},
+          ]
+
+        },
         chooseBannerStatus: "", //选择的广告状态
         bannerList: [],
         bannerStatusList: [
@@ -192,15 +224,37 @@
             msg: "本地选择"
           }
         ],
-        chooseUploadType: "",
+        bannerWeights: [
+          {
+            code: 1,
+            msg: "1"
+          },
+          {
+            code: 2,
+            msg: "2"
+          },
+          {
+            code: 3,
+            msg: "3"
+          },
+          {
+            code: 4,
+            msg: "4"
+          },
+          {
+            code: 5,
+            msg: "5"
+          }
+        ],
         pageNum: 1,
         pageSize: 10,
         total: 0,
-        qiNiuUploadData: {
-          token: ""
-        },
         uploadBannerIsShow: false,
         uploadBannerShowUrl: "",
+        isUploadSuccess: false,
+        qiNiuUploadData: {
+          token: ""
+        }
       }
     },
     mounted() {
@@ -223,9 +277,20 @@
       })
     },
     methods: {
+
+      //新增banner
       addNewBanner() {
 
       },
+
+      //撤销banner上传
+      cancelNewBanner() {
+        this.dialogVisible = false;
+        this.ruleForm.addUploadType = "";
+        this.uploadBannerShowUrl = "";
+      },
+
+      //点击搜索
       doSearch() {
         var startTime = "";
         var endTime = "";
@@ -244,6 +309,7 @@
           }
         })
       },
+
       pageChange(pageNum) {
         console.log(pageNum)
         this.pageNum = pageNum;
@@ -267,23 +333,34 @@
       handleRemove(file, fileList) {
         console.log(file, fileList);
       },
+
+      //显示上传图片
       handlePictureCardPreview(file) {
         console.log(file)
         this.uploadBannerIsShow = true
         this.uploadBannerShowUrl = file.url;
       },
-      //banner上传成功时
-      handleUploadSuccess() {
 
+      //banner上传成功时
+      handleUploadSuccess(file) {
+        console.log(file)
       },
+
       //超过一张选择的banner时
-      handleUploadFileOutOfBounds(){
+      handleUploadFileOutOfBounds() {
         this.$message({
           showClose: true,
           message: '一次只能选择一张进行上传'
         });
-      }
+      },
 
+      //上传的banner状态转换
+      statusChange(status) {
+      },
+
+      dialogClose() {
+        this.$refs["ruleForm"].resetFields();
+      }
     }
   }
 </script>

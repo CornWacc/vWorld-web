@@ -2,5 +2,8 @@
 
 module.exports = {
   requestUrl: 'http://localhost:9220',
-  defaultRequestStatus:"SUCCESS"
+  defaultRequestStatus:"SUCCESS",
+  qiNiuUploadUrl:"http://up.qiniup.com"
 }
+
+

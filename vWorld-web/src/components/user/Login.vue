@@ -47,15 +47,14 @@
 </template>
 
 <script>
-  import mima from "../../img/login/mima.png"
   import shop from "../../img/login/shop.png"
     export default {
         name: "Login",
       data(){
           return{
             form:{
-              userAccount:"",
-              userPassword:"",
+              userAccount:"", //用户登录账号
+              userPassword:"", //用户登陆密码
             },
             rules:{
               userAccount:[
@@ -87,27 +86,30 @@
           };
       },
       methods:{
+
         login(){
+
           this.$refs["form"].validate(valid =>{
             if(valid){
               this.$axios({
 
                 method:"post",
                 data:{
-                  userAccount:this.form.userAccount,
-                  userPassword:this.form.userPassword
-                },
-                headers:{
-                  // "Access-Control-Allow-Origin":"*"
+                  userAccount:this.form.userAccount, //用户登陆账号
+                  userPassword:this.form.userPassword //用户登陆密码
                 },
                 url:this.Globel.requestUrl+"/user/userLogin"
+
               }).then(res =>{
                 console.log(res)
-                if(res.data.object.status == "SUCCESS"){
+                if(res.data.object.status == this.Globel.defaultRequestStatus){
                   //登陆成功后设置token
                   localStorage.setItem("userToken",res.data.object.userToken)
+                  //设置UserId
                   localStorage.setItem("userId",res.data.object.userId)
+                  //登陆成功跳转主页
                   this.$router.push("/main")
+
                 }else{
                   this.$alert(res.data.object.message,"错误",{
                     confirmButtonText: '确定',
@@ -116,8 +118,8 @@
               })
             }
           })
-
         },
+
         toReg(){
           this.$router.push("/reg")
         }
