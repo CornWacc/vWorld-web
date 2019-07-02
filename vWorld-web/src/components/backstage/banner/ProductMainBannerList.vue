@@ -10,7 +10,7 @@
         </el-option>
       </el-select>
       <el-date-picker
-        v-model="time"
+        v-model="searchTime"
         type="daterange"
         align="right"
         unlink-panels
@@ -33,7 +33,8 @@
       </el-table-column>
       <el-table-column
         prop="mainBannerId"
-        label="广告图片Id">
+        label="广告图片Id"
+      width="150">
       </el-table-column>
       <el-table-column
         prop="mainBannerName"
@@ -49,7 +50,8 @@
       </el-table-column>
       <el-table-column
         prop="weight"
-        label="广告权重">
+        label="广告权重"
+        width="90">
       </el-table-column>
       <el-table-column
         prop="uploadType"
@@ -102,14 +104,14 @@
       @close="dialogClose"
     >
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" :label-position="labelPosition">
-        <el-form-item label="图片名称:" prop="addImageName">
-          <el-input v-model="ruleForm.addImageName"></el-input>
+        <el-form-item label="图片名称:" prop="mainBannerName">
+          <el-input v-model="ruleForm.mainBannerName"></el-input>
         </el-form-item>
         <el-form-item label="跳转路径:">
-          <el-input v-model="ruleForm.addSkipUrl"></el-input>
+          <el-input v-model="ruleForm.skipUrl"></el-input>
         </el-form-item>
         <el-form-item label="上传类型:">
-          <el-select style="width: 100%" placeholder="请选择banner上传类型" clearable v-model="ruleForm.addUploadType">
+          <el-select style="width: 100%" placeholder="请选择banner上传类型" clearable v-model="ruleForm.uploadType">
             <el-option
               v-for="item in uploadTypes"
               :key="item.code"
@@ -118,11 +120,11 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="图片地址:" v-if="ruleForm.addUploadType == 'OUTSIDE'" required>
-          <el-input v-model="ruleForm.addImageUrl"></el-input>
+        <el-form-item label="图片地址:" v-if="ruleForm.uploadType == 'OUTSIDE'" required>
+          <el-input v-model="ruleForm.mainBannerUrl"></el-input>
         </el-form-item>
-        <el-form-item label="权重:" prop="addWeight">
-          <el-select style="width: 100%" placeholder="请选择banner权重" clearable v-model="ruleForm.addWeight">
+        <el-form-item label="权重:" prop="weight">
+          <el-select style="width: 100%" placeholder="请选择banner权重" clearable v-model="ruleForm.weight">
             <el-option
               v-for="item in bannerWeights"
               :key="item.code"
@@ -131,15 +133,17 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="状态:" prop="addWeight">
+        <el-form-item label="状态:" prop="mainBannerStatus">
           <el-switch
-            v-model="inline"
+            v-model="ruleForm.mainBannerStatus"
             active-color="#13ce66"
             inactive-color="#ff4949"
-            @change="statusChange">
+            @change="statusChange"
+            active-value="OPEN"
+            inactive-value="CLOSE">
           </el-switch>
         </el-form-item>
-        <el-form-item label="图片" v-if="ruleForm.addUploadType == 'LOCAL'"
+        <el-form-item label="图片" v-if="ruleForm.uploadType == 'LOCAL'"
         >
           <el-upload
             :action="this.Globel.qiNiuUploadUrl"
@@ -163,7 +167,7 @@
     <el-pagination
       background
       layout="prev, pager, next"
-      :total="total" style="margin-top: 30px" :page-size="5" @current-change="pageChange">
+      :total="total" style="margin-top: 30px" :page-size="10" @current-change="pageChange">
     </el-pagination>
 
     <el-dialog :visible.sync="uploadBannerIsShow">
@@ -176,33 +180,35 @@
 </template>
 
 <script>
+
   export default {
     name: "ProductMainBannerBackStage",
     data() {
       return {
         inline: false,
-        time: null,
+        searchTime: null,
         dialogVisible: false,
         labelPosition: "left",
         ruleForm: {
-          addImageName: "",//新增图片名称
-          addSkipUrl: "",//新增跳转url
-          addUploadType: "",//新增图片上传类型
-          addImageUrl: "",//新增图片地址,
-          addWeight: "",//权重
+          mainBannerName: "", //新增图片名称
+          skipUrl: "", //新增跳转url
+          uploadType: "", //新增图片上传类型
+          mainBannerUrl: "", //新增图片地址,
+          weight: "", //权重
+          mainBannerStatus: "CLOSE" //banner状态
         },
         rules: {
-          addImageName: [
+          mainBannerName: [
             {required: true, message: '请输入Banner名称', trigger: 'blur'},
-            {min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur'}
+            {min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur'}
           ],
-          addWeight: [
+          weight: [
             {required: true, message: '请选择权重', trigger: 'blur'},
           ]
 
         },
         chooseBannerStatus: "", //选择的广告状态
-        bannerList: [],
+        bannerList: [], //banner列表
         bannerStatusList: [
 
           {
@@ -249,9 +255,9 @@
         pageNum: 1,
         pageSize: 10,
         total: 0,
-        uploadBannerIsShow: false,
+        uploadBannerIsShow: false,  //上传部件是否现实
         uploadBannerShowUrl: "",
-        isUploadSuccess: false,
+        isUploadSuccess: false, //是否上传成功
         qiNiuUploadData: {
           token: ""
         }
@@ -262,7 +268,6 @@
         url: this.Globel.requestUrl + "/banner/mainBannerListPageQuery",
         method: "GET"
       }).then(res => {
-        console.log(res)
         if (res.data.object.status == this.Globel.defaultRequestStatus) {
           this.bannerList = res.data.object.pageEntity.pageList;
           this.total = res.data.object.pageEntity.total;
@@ -272,7 +277,6 @@
         url: this.Globel.requestUrl + "/getQiNiuToken",
         method: "GET"
       }).then(res => {
-        console.log(res);
         this.qiNiuUploadData.token = res.data.msg
       })
     },
@@ -281,6 +285,37 @@
       //新增banner
       addNewBanner() {
 
+        console.log(this.ruleForm)
+        this.$axios({
+          url: this.Globel.requestUrl + "/banner/mainBannerAdd",
+          method: "post",
+          data: this.ruleForm
+        }).then(res => {
+          console.log(res)
+          console.log(res.data.status)
+          if (res.data.status != this.Globel.defaultRequestStatus) {
+            this.$message(res.data.msg)
+          } else {
+            this.dialogVisible = false;
+
+            //清空输入框
+            this.ruleForm.uploadType = "";
+            this.ruleForm.mainBannerUrl = "";
+            this.ruleForm.mainBannerName = "";
+            this.ruleForm.skipUrl = "";
+
+            //reload
+            this.$axios({
+              url: this.Globel.requestUrl + "/banner/mainBannerListPageQuery",
+              method: "GET"
+            }).then(res => {
+              if (res.data.object.status == this.Globel.defaultRequestStatus) {
+                this.bannerList = res.data.object.pageEntity.pageList;
+                this.total = res.data.object.pageEntity.total;
+              }
+            })
+          }
+        })
       },
 
       //撤销banner上传
@@ -294,9 +329,9 @@
       doSearch() {
         var startTime = "";
         var endTime = "";
-        if (this.time != null) {
-          startTime = this.time[0];
-          endTime = this.time[1];
+        if (this.searchTime != null) {
+          startTime = this.searchTime[0];
+          endTime = this.searchTime[1];
         }
         // console.log(this.chooseBannerStatus)
         this.$axios({
@@ -315,9 +350,9 @@
         this.pageNum = pageNum;
         var startTime = "";
         var endTime = "";
-        if (this.time != null) {
-          startTime = this.time[0];
-          endTime = this.time[1];
+        if (this.searchTime != null) {
+          startTime = this.searchTime[0];
+          endTime = this.searchTime[1];
         }
         // console.log(this.chooseBannerStatus)
         this.$axios({
@@ -356,6 +391,8 @@
 
       //上传的banner状态转换
       statusChange(status) {
+        console.log(status)
+        this.ruleForm.mainBannerStatus = status
       },
 
       dialogClose() {
