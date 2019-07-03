@@ -39,21 +39,16 @@
       <el-table-column
         prop="mainBannerName"
         label="广告图片名称"
-      width="140">
+        width="150">
       </el-table-column>
       <el-table-column
         prop="mainBannerUrl"
         label="广告图片Url"
-      width="150">
+        width="200">
       </el-table-column>
       <el-table-column
         prop="skipUrl"
         label="跳转路径">
-      </el-table-column>
-      <el-table-column
-        prop="weight"
-        label="广告权重"
-        width="80">
       </el-table-column>
       <el-table-column
         prop="uploadType"
@@ -126,16 +121,6 @@
         <el-form-item label="图片地址:" v-if="ruleForm.uploadType == 'OUTSIDE'" required>
           <el-input v-model="ruleForm.mainBannerUrl"></el-input>
         </el-form-item>
-        <el-form-item label="权重:" prop="weight">
-          <el-select style="width: 100%" placeholder="请选择banner权重" clearable v-model="ruleForm.weight">
-            <el-option
-              v-for="item in bannerWeights"
-              :key="item.code"
-              :label="item.msg"
-              :value="item.code">
-            </el-option>
-          </el-select>
-        </el-form-item>
         <el-form-item label="状态:" prop="mainBannerStatus">
           <el-switch
             v-model="ruleForm.mainBannerStatus"
@@ -197,8 +182,7 @@
           skipUrl: "", //新增跳转url
           uploadType: "", //新增图片上传类型
           mainBannerUrl: "", //新增图片地址,
-          qiNiuUploadCallBack:"", //七牛回调hash值
-          weight: "", //权重
+          qiNiuUploadCallBack: "", //七牛回调hash值
           mainBannerStatus: "CLOSE" //banner状态
         },
         rules: {
@@ -234,28 +218,6 @@
             msg: "本地选择"
           }
         ],
-        bannerWeights: [
-          {
-            code: 1,
-            msg: "1"
-          },
-          {
-            code: 2,
-            msg: "2"
-          },
-          {
-            code: 3,
-            msg: "3"
-          },
-          {
-            code: 4,
-            msg: "4"
-          },
-          {
-            code: 5,
-            msg: "5"
-          }
-        ],
         pageNum: 1, //页码
         pageSize: 10, //每页大小
         total: 0, //总条数
@@ -263,7 +225,7 @@
         uploadBannerShowUrl: "",
         qiNiuUploadData: {
           token: "",
-          callBackHash:""
+          callBackHash: ""
         }
       }
     },

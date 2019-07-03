@@ -150,11 +150,15 @@
         toLogin(){
           this.$router.push("/")
         },
+
+        //头像上传成功
         handleAvatarSuccess(res, file) {
           console.log(res,file)
           this.form.userAvatar = res.hash
           this.showAvatar = URL.createObjectURL(file.raw);
         },
+
+        //头像上传之前
         beforeAvatarUpload(file) {
           const isJPG = file.type === 'image/jpeg';
           const isLt2M = file.size / 1024 / 1024 < 2;

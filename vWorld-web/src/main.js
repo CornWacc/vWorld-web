@@ -6,12 +6,12 @@ import router from './router'
 import element from "element-ui"
 import 'element-ui/lib/theme-chalk/index.css';
 import axios from 'axios'
-import swiper from "vue-awesome-swiper"
+// import Swiper from "swiper"
 import 'swiper/dist/css/swiper.css'
 import './assets/iconFont/iconfont.css'
 import  Globel from './Globel'
 Vue.use(element)
-Vue.use(swiper)
+// Vue.use(Swiper)
 Vue.prototype.$axios = axios
 Vue.prototype.Globel = Globel
 Vue.config.productionTip = false

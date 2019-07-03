@@ -31,11 +31,15 @@
           <div class="show-title-icon"></div>
           <p class="show-title-font">热播影片</p>
         </div>
-        <swiper class="swiper-show" :options="swiperOption">
-          <swiper-slide v-for="item in img" :key="item" data-swiper-autoplay="1000">
-            <img class="banner" :src="item">
-          </swiper-slide>
-        </swiper>
+        <div class="swiper-container swiper-show  ">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide" v-for="item in mainBannerList" :key="item.mainBannerId">
+              <el-image :src="item.mainBannerUrl" @click="skip(item)" :fit="fits" style="height: 100%">
+              </el-image>
+            </div>
+          </div>
+          <div class="swiper-pagination"></div>
+        </div>
       </div>
       <div class="videos-free">
         <div class="show-title">
@@ -74,65 +78,84 @@
 </template>
 
 <script>
+
+  import Swiper from 'swiper'
+
   export default {
     name: "ShopMain",
     data() {
       return {
         userForm: {
           userAvatar: "",
-          userName:""
+          userName: ""
         },
-        swiperOption: {
-          speed: 500,
-          autoplay: true,
-          slidesPerView: "auto",
-          navigation: {
-            nextEl: '.swiper-button-next',
-            prevEl: '.swiper-button-prev',
-          },
-          pagination: {
-            el: '#swiper-pagination',
-            // type : 'custom',
-          }
-        },
-        img: [
-          "http://attach.bbs.miui.com/forum/201804/14/115228gf92z731fl2slzvv.jpg",
-          "http://img5.imgtn.bdimg.com/it/u=3565934373,813577224&fm=200&gp=0.jpg"
-
-        ],
+        mainBannerList: [],
         videos: [
           "12a3", "12a3"
         ],
-        isAdmin: false //是否为管理员
+        isAdmin: false, //是否为管理员
+        fits: "cover",
+        that: this
       }
     },
     mounted() {
+
+      //获取用户信息
       this.$axios({
         url: this.Globel.requestUrl + "/user/userInfoQuery?userId=" + localStorage.getItem("userId"),
         method: "get",
       }).then(res => {
-        console.log(res.data.object.userAvatar)
         this.userForm.userAvatar = res.data.object.userAvatar
         this.userForm.userName = res.data.object.userName
         if (res.data.object.userRole == "超级管理员") {
           this.isAdmin = true
         }
       })
+
+      //获取主页bannerList
+      this.$axios({
+        url: this.Globel.requestUrl + "/banner/mainBannerListQuery",
+        method: "get"
+      }).then(res => {
+        console.log(res)
+        if (res.data.status == this.Globel.defaultRequestStatus) {
+          this.mainBannerList = res.data.object.mainBannerInfos
+        }
+      })
+      const that = this;
+      setTimeout(function () {
+        var swiper = new Swiper('.swiper-container', {
+          autoplay: {
+            delay: 3500,
+            stopOnLastSlide: false,
+            disableOnInteraction: false,
+          },
+          effect: 'fade',
+          loop: true,
+          grabCursor: true,
+          pagination: {
+            el: '.swiper-pagination',
+          },
+
+        })
+      }, 1000)
+
     },
     methods: {
+
+      /**
+       * dropdown点击绑定事件
+       * */
       handleCommand(c) {
         console.log(c)
         if (c == "toBackStage") {
-
           this.$router.push("/backStage")
         }
         if (c == "logOut") {
-
           this.$axios({
             url: this.Globel.requestUrl + "/user/userLogOut?userId=" + localStorage.getItem("userId"),
             method: "GET"
           }).then(res => {
-
             if (res.data.object.status == "SUCCESS") {
               localStorage.clear()
               this.$router.push("/")
@@ -142,6 +165,13 @@
       },
       errorHandler() {
         console.log(1)
+      },
+
+      //页面跳转
+      skip(data){
+        if(data.skipUrl != ""){
+          window.location.href = "http://"+data.skipUrl
+        }
       }
     }
   }

@@ -3,7 +3,8 @@
     <el-row>
       <el-col :span="5">
         <div class="left-module">
-          <el-tree class="user-tree" :data="data"   node-key="roleId" :props="defaultProps" 	>
+          <el-tree class="user-tree" @node-click="searchUserByUserRole" :data="data" node-key="roleId"
+                   :props="defaultProps">
           </el-tree>
         </div>
       </el-col>
@@ -18,7 +19,7 @@
             <el-table-column
               prop="userId"
               label="用户id"
-            width="160">
+              width="160">
             </el-table-column>
             <el-table-column
               prop="userName"
@@ -39,13 +40,12 @@
             <el-table-column
               prop="createTime"
               label="注册时间"
-            width="150px">
+              width="150px">
             </el-table-column>
             <el-table-column
               prop="userStatus"
               label="状态"
-              width="80px"
-            >
+              width="80px">
               <template slot-scope="scope">
                 <el-tag v-if="scope.row.userStatus == '开启'">{{scope.row.userStatus}}</el-tag>
                 <el-tag v-else type="danger">{{scope.row.userStatus}}</el-tag>
@@ -57,14 +57,13 @@
               <template slot-scope="scope">
                 <el-row>
                   <el-col>
-                    <el-button size="mini" type="primary" @click="dialogVisible = true">编辑</el-button>
+                    <el-button size="mini" type="primary" @click="updateUser(scope.row)">编辑</el-button>
                   </el-col>
                   <el-col>
                     <el-button size="mini" @click="delUser(scope.row.userId,scope.$index)" type="danger"
                                style="margin-top: 8px">删除
                     </el-button>
                   </el-col>
-
                 </el-row>
               </template>
             </el-table-column>
@@ -81,27 +80,27 @@
       title="编辑"
       :visible.sync="dialogVisible"
       width="30%"
-      >
-      <el-form label-width="80px" v-model="updateObj" :label-position="labelPosition">
+    >
+      <el-form label-width="80px" :label-position="labelPosition">
         <el-form-item label="用户名称:">
-          <el-input></el-input>
+          <el-input v-model="compileUser.userName"></el-input>
         </el-form-item>
         <el-form-item label="用户邮箱:">
-          <el-input></el-input>
+          <el-input v-model="compileUser.userEmail"></el-input>
         </el-form-item>
         <el-form-item label="手机号:">
-          <el-input></el-input>
+          <el-input v-model="compileUser.userPhone"></el-input>
         </el-form-item>
         <el-form-item label="权限:">
           <el-cascader
             :options="options"
-            v-model="selectedOptions"
+            v-model="compileUser.userRole"
             @change="handleChange" style="width: 100%">
           </el-cascader>
         </el-form-item>
         <el-form-item label="状态:">
           <el-switch
-            v-model="inline"
+            v-model="compileUser.userStatus"
             active-color="#13ce66"
             inactive-color="#ff4949">
           </el-switch>
@@ -121,122 +120,31 @@
     data() {
       return {
         data:
-          [
-            {
-              id: 1,
-              label: "管理员",
-              children: [{
-                label: "销售管理员"
-              }, {
-                label: "视频管理员"
-              }, {
-                label: "广告管理员"
-              },
-                {
-                  label: "超级管理员"
-                }]
-            }, {
-            label: '用户',
-            id: 2,
-            children: [{
-              label: '普通用户',
-            },
-              {
-                label: "Vw用户"
-              }]
-          }],
-        defaultProps:{
-          children:"children",
-          label:"roleName"
+          [],
+        defaultProps: {
+          children: "children",
+          label: "roleName"
         },
-
         selectedOptions: [],
         userList: [],
-        keyWord: "",
-        userRole: "",
-        keyWordType: "",
+        keyWord: "", //查询关键词
+        userRole: "", //用户权限
+        keyWordType: "", //查询类型
         total: 0,
         pageNum: 0,
-        dialogVisible: false,
+        dialogVisible: false, //对话框是否现实
         inline: true,
-        labelPosition: "right",
+        labelPosition: "right", //form表单对其方式
         updateObj: null,
-        options: [{
-          value: 'zhinan',
-          label: '指南',
-          children: [{
-            value: 'shejiyuanze',
-            label: '设计原则',
-            children: [{
-              value: 'yizhi',
-              label: '一致'
-            }, {
-              value: 'fankui',
-              label: '反馈'
-            }, {
-              value: 'xiaolv',
-              label: '效率'
-            }, {
-              value: 'kekong',
-              label: '可控'
-            }]
-          }, {
-            value: 'daohang',
-            label: '导航',
-            children: [{
-              value: 'cexiangdaohang',
-              label: '侧向导航'
-            }, {
-              value: 'dingbudaohang',
-              label: '顶部导航'
-            }]
-          }]
-        }, {
-          value: 'zujian',
-          label: '组件',
-          children: [{
-            value: 'basic',
-            label: 'Basic',
-            children: [{
-              value: 'layout',
-              label: 'Layout 布局'
-            }, {
-              value: 'color',
-              label: 'Color 色彩'
-            }, {
-              value: 'typography',
-              label: 'Typography 字体'
-            }, {
-              value: 'icon',
-              label: 'Icon 图标'
-            }, {
-              value: 'button',
-              label: 'Button 按钮'
-            }]
-          }, {
-            value: 'data',
-            label: 'Data',
-            children: [{
-              value: 'table',
-              label: 'Table 表格'
-            }, {
-              value: 'tag',
-              label: 'Tag 标签'
-            }, {
-              value: 'progress',
-              label: 'Progress 进度条'
-            }, {
-              value: 'tree',
-              label: 'Tree 树形控件'
-            }, {
-              value: 'pagination',
-              label: 'Pagination 分页'
-            }, {
-              value: 'badge',
-              label: 'Badge 标记'
-            }]
-          }]
-        }]
+        options: [],
+
+        compileUser: {
+          userName: "",
+          userEmail: "",
+          userPhone: "",
+          userStatus: "",
+          userRole: ""
+        }
       }
     },
     mounted() {
@@ -259,26 +167,12 @@
     methods: {
       doSearch() {
         this.keyWordType = "keyWord"
-        this.$axios({
-          url: this.Globel.requestUrl + "/user/userListPageQuery?type=" + this.keyWordType + "&keyWord=" + this.keyWord + "&pageNum=" + this.pageNum + "&pageSize=5",
-          method: "get"
-        }).then(res => {
-          console.log(res)
-          this.userList = res.data.object.userInfoList
-          this.total = res.data.object.total
-        })
+        this.pageQueryUserList(this.pageNum)
       }
       ,
       pageChange(num) {
         this.keyWordType = "keyWord"
-        this.$axios({
-          url: this.Globel.requestUrl + "/user/userListPageQuery?type=" + this.keyWordType + "&keyWord=" + this.keyWord + "&pageNum=" + num + "&pageSize=5",
-          method: "get"
-        }).then(res => {
-          console.log(res)
-          this.userList = res.data.object.userInfoList
-          this.total = res.data.object.total
-        })
+        this.pageQueryUserList(num)
       }
       ,
       delUser(userId, index) {
@@ -290,23 +184,61 @@
           console.log(res);
           if (res.data.object.status == "SUCCESS") {
             this.$message("删除成功")
-            this.$axios({
-              url: this.Globel.requestUrl + "/user/userListPageQuery?type=" + this.keyWordType + "&keyWord=" + this.keyWord + "&pageNum=1" + "&pageSize=5",
-              method: "get"
-            }).then(res => {
-              console.log(res)
-              this.userList = res.data.object.userInfoList
-              this.total = res.data.object.total
-            })
+            this.pageQueryUserList(1)
           }
         })
-      }
-      ,
+      },
+
+      /**
+       * 分页查询用户列表
+       * */
+      pageQueryUserList(num) {
+        this.$axios({
+          url: this.Globel.requestUrl + "/user/userListPageQuery?type=" + this.keyWordType + "&keyWord=" + this.keyWord + "&pageNum=" + num + "&pageSize=5",
+          method: "get"
+        }).then(res => {
+          console.log(res)
+          this.userList = res.data.object.userInfoList
+          this.total = res.data.object.total
+        })
+      },
       handleClose(key, keyPath) {
         // console.log(key, keyPath);
       }
       ,
       handleChange(key, keyPath) {
+
+      },
+
+      /**
+       * 查询用户通过用户全县
+       * */
+      searchUserByUserRole(role) {
+        console.log(role)
+        this.$axios({
+          url: this.Globel.requestUrl + "/user/userListPageQuery?type=userRole" + "&keyWord=" + role.roleId + "&pageNum=" + this.pageNum + "&pageSize=5",
+          method: "get"
+        }).then(res => {
+          console.log(res)
+          this.userList = res.data.object.userInfoList
+          this.total = res.data.object.total
+        })
+      },
+
+      /**
+       * 更新用户
+       * */
+      updateUser(user) {
+        console.log(user)
+        this.dialogVisible = true
+        this.compileUser.userName = user.userName
+        this.compileUser.userEmail = user.userEmail
+        this.compileUser.userPhone = user.userPhone
+        // var status = (user.userStatus == "开启" ? "OPEN" : "CLOSE")
+        this.compileUser.userStatus = user.userStatus === "开启" ? "OPEN" : "CLOSE"
+        console.log(typeof user.userStatus == "开启" ? "OPEN" : "CLOSE")
+        this.compileUser.userRole = user.userRole
+        console.log(this.compileUser,1)
 
       }
     }
@@ -328,12 +260,6 @@
   .right-moudle {
     width: 100%;
     height: 100%;
-    /*margin-left: 12px;*/
-    /*border:1px solid rgba(0, 0, 0, 0.3);*/
-  }
-
-  .user-tree {
-    /*box-shadow: 4px 4px 4px rgba(0,0,0,0.1);*/
   }
 
   .search {

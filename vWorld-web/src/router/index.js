@@ -7,6 +7,7 @@ import Main from "@/components/main/Main"
 import Reg from '@/components/user/Reg'
 import RoleList from "@/components/backstage/role/RoleList"
 import ProductMainBannerList from '@/components/backstage/banner/ProductMainBannerList'
+import LoginBannerList from '@/components/backstage/banner/LoginBannerList'
 Vue.use(Router)
 
 
@@ -35,6 +36,10 @@ export default new Router({
           path:"productMainBannerList",
           name:"ProductMainBannerList",
           component:ProductMainBannerList
+        },{
+          path:"loginBannerList",
+          name:"LoginBannerList",
+          component:LoginBannerList
         }
       ]
     },
