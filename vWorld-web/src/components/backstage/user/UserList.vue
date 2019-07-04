@@ -60,9 +60,7 @@
                     <el-button size="mini" type="primary" @click="updateUser(scope.row)">编辑</el-button>
                   </el-col>
                   <el-col>
-                    <el-button size="mini" @click="delUser(scope.row.userId,scope.$index)" type="danger"
-                               style="margin-top: 8px">删除
-                    </el-button>
+                    <el-button size="mini" @click="delUser(scope.row.userId,scope.$index)" type="danger" style="margin-top: 8px">删除</el-button>
                   </el-col>
                 </el-row>
               </template>
@@ -93,22 +91,27 @@
         </el-form-item>
         <el-form-item label="权限:">
           <el-cascader
+            :clearable="true"
             :options="options"
-            v-model="compileUser.userRole"
-            @change="handleChange" style="width: 100%">
+            v-model="compileUser.userRoleData"
+            @change="handleChange" style="width: 100%"
+            :props="propsData"
+            :show-all-levels="false">
           </el-cascader>
         </el-form-item>
         <el-form-item label="状态:">
           <el-switch
             v-model="compileUser.userStatus"
             active-color="#13ce66"
-            inactive-color="#ff4949">
+            inactive-color="#ff4949"
+            active-value="OPEN"
+            inactive-value="CLOSE">
           </el-switch>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
     <el-button @click="dialogVisible = false" size="mini">取 消</el-button>
-    <el-button type="primary" @click="dialogVisible = false" size="mini">确 定</el-button>
+    <el-button type="primary" @click="sureUpdateUser" size="mini">确 定</el-button>
   </span>
     </el-dialog>
   </div>
@@ -138,12 +141,18 @@
         updateObj: null,
         options: [],
 
+        propsData: {
+          value: "roleId",
+          label: "roleName",
+          checkStrictly: true
+        },
         compileUser: {
           userName: "",
           userEmail: "",
           userPhone: "",
           userStatus: "",
-          userRole: ""
+          userRoleData: "",
+          userId:""
         }
       }
     },
@@ -160,7 +169,9 @@
         url: this.Globel.requestUrl + "/role/roleListTreeQuery",
         method: "get"
       }).then(res => {
+        console.log(res.data.object.roleInfos)
         this.data = res.data.object.roleInfos
+        this.options = res.data.object.roleInfos
       })
     }
     ,
@@ -206,8 +217,8 @@
         // console.log(key, keyPath);
       }
       ,
-      handleChange(key, keyPath) {
-
+      handleChange(data, keyPath) {
+        this.compileUser.userRoleData = data
       },
 
       /**
@@ -226,20 +237,42 @@
       },
 
       /**
-       * 更新用户
+       * 显示用户之前的参数
        * */
       updateUser(user) {
-        console.log(user)
         this.dialogVisible = true
+        this.compileUser.userId = user.userId
         this.compileUser.userName = user.userName
         this.compileUser.userEmail = user.userEmail
         this.compileUser.userPhone = user.userPhone
-        // var status = (user.userStatus == "开启" ? "OPEN" : "CLOSE")
         this.compileUser.userStatus = user.userStatus === "开启" ? "OPEN" : "CLOSE"
-        console.log(typeof user.userStatus == "开启" ? "OPEN" : "CLOSE")
-        this.compileUser.userRole = user.userRole
-        console.log(this.compileUser,1)
+        this.compileUser.userRoleData = user.userRoleId
+      },
+      /**
+       * 确认更新
+       * */
+      sureUpdateUser() {
 
+        var data = {
+          userId:this.compileUser.userId,
+          userName: this.compileUser.userName,
+          updateUserId:localStorage.getItem("userId"),
+          updateUserRoleId:this.$route.query.userRoleId,
+          userEmail:this.compileUser.userEmail,
+          userPhone:this.compileUser.userPhone,
+          userStatus:this.compileUser.userStatus,
+          userRoleId:this.compileUser.userRoleData
+        }
+        this.$axios({
+          url:this.Globel.requestUrl+"/user/userUpdate",
+          data:data,
+          method:"POST"
+        }).then(res =>{
+          if(res.data.status == this.Globel.defaultRequestStatus){
+            this.dialogVisible = false
+          }
+          this.$message(res.data.msg)
+        })
       }
     }
   }

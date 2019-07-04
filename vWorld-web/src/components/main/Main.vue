@@ -87,7 +87,8 @@
       return {
         userForm: {
           userAvatar: "",
-          userName: ""
+          userName: "",
+          userRoleId:""
         },
         mainBannerList: [],
         videos: [
@@ -105,8 +106,10 @@
         url: this.Globel.requestUrl + "/user/userInfoQuery?userId=" + localStorage.getItem("userId"),
         method: "get",
       }).then(res => {
+        console.log(res)
         this.userForm.userAvatar = res.data.object.userAvatar
         this.userForm.userName = res.data.object.userName
+        this.userForm.userRoleId = res.data.object.userRoleId
         if (res.data.object.userRole == "超级管理员") {
           this.isAdmin = true
         }
@@ -117,7 +120,6 @@
         url: this.Globel.requestUrl + "/banner/mainBannerListQuery",
         method: "get"
       }).then(res => {
-        console.log(res)
         if (res.data.status == this.Globel.defaultRequestStatus) {
           this.mainBannerList = res.data.object.mainBannerInfos
         }
@@ -147,9 +149,16 @@
        * dropdown点击绑定事件
        * */
       handleCommand(c) {
-        console.log(c)
         if (c == "toBackStage") {
-          this.$router.push("/backStage")
+          this.$router.push(
+            {
+              path:"/backStage",
+              query:{
+                userRoleId:this.userForm.userRoleId,
+                userName:this.userForm.userName
+              }
+            }
+          )
         }
         if (c == "logOut") {
           this.$axios({

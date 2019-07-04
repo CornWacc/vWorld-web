@@ -19,7 +19,7 @@
                  <span>User</span>
                </template>
                <el-menu-item-group>
-                 <el-menu-item index="1-1"><router-link to="/backStage/userList" tag="div">用户管理操作</router-link></el-menu-item>
+                 <el-menu-item index="1-1"><router-link :to="{path:'/backStage/userList',query:{userRoleId:this.$route.query.userRoleId}}" tag="div">用户管理操作</router-link></el-menu-item>
                  <el-menu-item index="1-2"><router-link to="/backStage/" tag="div">用户登录日志</router-link></el-menu-item>
                  <el-menu-item index="1-3"><router-link to="/backStage/roleList" tag="div">用户权限管理</router-link></el-menu-item>
                </el-menu-item-group>
