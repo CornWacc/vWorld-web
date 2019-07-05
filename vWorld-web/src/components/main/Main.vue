@@ -110,6 +110,8 @@
         this.userForm.userAvatar = res.data.object.userAvatar
         this.userForm.userName = res.data.object.userName
         this.userForm.userRoleId = res.data.object.userRoleId
+
+        localStorage.setItem("userRoleId",res.data.object.userRoleId)
         if (res.data.object.userRole == "超级管理员") {
           this.isAdmin = true
         }
@@ -153,10 +155,6 @@
           this.$router.push(
             {
               path:"/backStage",
-              query:{
-                userRoleId:this.userForm.userRoleId,
-                userName:this.userForm.userName
-              }
             }
           )
         }

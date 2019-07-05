@@ -292,7 +292,7 @@
         })
       },
       addNewRole() {
-        var parentId = "1"
+        var parentId = "无"
         if (this.byOneLevelRoleId != '' && this.byOneLevelRoleId != null) {
           parentId = this.byOneLevelRoleId
         }
@@ -305,8 +305,7 @@
             roleName: this.createRoleName,
             roleLevel: this.createRoleLevel,
             roleParentId: parentId,
-            // byUserId:localStorage.getItem("userId")
-            byUserId: "usB6j0MLF6FikEwi"
+            byUserId: localStorage.getItem("userId")
           },
 
           method: "post"

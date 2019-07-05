@@ -21,7 +21,7 @@
       >
       </el-date-picker>
       <el-button @click="doSearch" style="margin-left: 6px;">搜索</el-button>
-      <el-button @click="dialogVisible = true" style="margin-left: 6px;margin-right: 6px">新增</el-button>
+      <el-button @click="addDialogIsShow = true" style="margin-left: 6px;margin-right: 6px">新增</el-button>
     </el-form>
     <el-table class="banner-table" :data="bannerList" :stripe="true">
       <el-table-column
@@ -39,21 +39,11 @@
       <el-table-column
         prop="mainBannerName"
         label="广告图片名称"
-      width="140">
-      </el-table-column>
-      <el-table-column
-        prop="mainBannerUrl"
-        label="广告图片Url"
-      width="150">
+        width="140">
       </el-table-column>
       <el-table-column
         prop="skipUrl"
         label="跳转路径">
-      </el-table-column>
-      <el-table-column
-        prop="weight"
-        label="广告权重"
-        width="80">
       </el-table-column>
       <el-table-column
         prop="uploadType"
@@ -67,15 +57,24 @@
       <el-table-column
         prop="mainBannerStatus"
         label="状态"
-        width="70"
       >
         <template slot-scope="scope">
           <el-tag v-if="scope.row.mainBannerStatus == '开启'">{{scope.row.mainBannerStatus}}
-
           </el-tag>
           <el-tag v-else type="danger">{{scope.row.mainBannerStatus}}
-
           </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="mainBannerUrl"
+        label="查看">
+        <template slot-scope="scope">
+          <!--<el-button type="primary" plain>查看</el-button>-->
+          <el-popover trigger="hover" placement="bottom" width="300">
+            <el-image :src="scope.row.mainBannerUrl"></el-image>
+            <p>{{scope.row.mainBannerUrl}}</p>
+            <el-button type="primary" slot="reference" plain>查看</el-button>
+          </el-popover>
         </template>
       </el-table-column>
       <el-table-column
@@ -86,7 +85,7 @@
         <template slot-scope="scope">
           <el-row>
             <el-col>
-              <el-button size="mini" @click="updateMainBanner(scope.row.roleId ,scope.$index)" type="primary"
+              <el-button size="mini" @click="openMainBannerDialog(scope.row ,scope.$index)" type="primary"
               >编辑
               </el-button>
             </el-col>
@@ -103,7 +102,7 @@
     <el-dialog
       title="新增主页Banner"
       width="34%"
-      :visible.sync="dialogVisible"
+      :visible.sync="addDialogIsShow"
       @close="dialogClose"
     >
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" :label-position="labelPosition">
@@ -125,16 +124,6 @@
         </el-form-item>
         <el-form-item label="图片地址:" v-if="ruleForm.uploadType == 'OUTSIDE'" required>
           <el-input v-model="ruleForm.mainBannerUrl"></el-input>
-        </el-form-item>
-        <el-form-item label="权重:" prop="weight">
-          <el-select style="width: 100%" placeholder="请选择banner权重" clearable v-model="ruleForm.weight">
-            <el-option
-              v-for="item in bannerWeights"
-              :key="item.code"
-              :label="item.msg"
-              :value="item.code">
-            </el-option>
-          </el-select>
         </el-form-item>
         <el-form-item label="状态:" prop="mainBannerStatus">
           <el-switch
@@ -167,6 +156,63 @@
     <el-button type="primary" @click="addNewBanner">确 定</el-button>
   </span>
     </el-dialog>
+    <el-dialog
+      title="编辑主页Banner"
+      width="34%"
+      :visible.sync="compileDialogIsShow"
+      @close="dialogClose"
+    >
+      <el-form :model="compileMainBannerData" :rules="rules" ref="ruleForm" label-width="120px" :label-position="labelPosition">
+        <el-form-item label="图片名称:" prop="mainBannerName">
+          <el-input v-model="compileMainBannerData.mainBannerName"></el-input>
+        </el-form-item>
+        <el-form-item label="跳转路径:">
+          <el-input v-model="compileMainBannerData.skipUrl"></el-input>
+        </el-form-item>
+        <el-form-item label="上传类型:" prop="uploadType">
+          <el-select style="width: 100%" placeholder="请选择banner上传类型" clearable v-model="compileMainBannerData.uploadType">
+            <el-option
+              v-for="item in uploadTypes"
+              :key="item.code"
+              :label="item.msg"
+              :value="item.code">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="图片地址:" v-if="compileMainBannerData.uploadType == 'OUTSIDE'" required>
+          <el-input v-model="compileMainBannerData.mainBannerUrl"></el-input>
+        </el-form-item>
+        <el-form-item label="状态:" prop="mainBannerStatus">
+          <el-switch
+            v-model="compileMainBannerData.mainBannerStatus"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+            @change="statusChange"
+            active-value="OPEN"
+            inactive-value="CLOSE">
+          </el-switch>
+        </el-form-item>
+        <el-form-item label="图片" v-if="compileMainBannerData.uploadType == 'LOCAL'"
+        >
+          <el-upload
+            :action="this.Globel.qiNiuUploadUrl"
+            list-type="picture-card"
+            :on-preview="handlePictureCardPreview"
+            :on-remove="handleRemove"
+            :data="qiNiuUploadData"
+            :on-success="handleUploadSuccess"
+            :on-exceed="handleUploadFileOutOfBounds"
+            :limit="1">
+            <i class="el-icon-plus"></i>
+
+          </el-upload>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="cancelCompileBanner">取 消</el-button>
+    <el-button type="primary" @click="compileMainBanner">确 定</el-button>
+  </span>
+    </el-dialog>
     <el-pagination
       background
       layout="prev, pager, next"
@@ -190,15 +236,15 @@
       return {
         inline: false,
         searchTime: null,
-        dialogVisible: false,
+        addDialogIsShow: false,
+        compileDialogIsShow: false,
         labelPosition: "left",
         ruleForm: {
           mainBannerName: "", //新增图片名称
           skipUrl: "", //新增跳转url
           uploadType: "", //新增图片上传类型
           mainBannerUrl: "", //新增图片地址,
-          qiNiuUploadCallBack:"", //七牛回调hash值
-          weight: "", //权重
+          qiNiuUploadCallBack: "", //七牛回调hash值
           mainBannerStatus: "CLOSE" //banner状态
         },
         rules: {
@@ -208,7 +254,10 @@
           ],
           weight: [
             {required: true, message: '请选择权重', trigger: 'blur'},
-          ]
+          ],
+          uploadType:[{
+            required:true,message:"请选择上传类型"
+          }]
 
         },
         chooseBannerStatus: "", //选择的广告状态
@@ -263,7 +312,14 @@
         uploadBannerShowUrl: "",
         qiNiuUploadData: {
           token: "",
-          callBackHash:""
+          callBackHash: ""
+        },
+        compileMainBannerData:{
+          mainBannerName:"",
+          mainBannerStatus:"",
+          skipUrl:"",
+          mainBannerUrl:"",
+          uploadType:""
         }
       }
     },
@@ -272,6 +328,7 @@
         url: this.Globel.requestUrl + "/banner/mainBannerListPageQuery",
         method: "GET"
       }).then(res => {
+        console.log(res.data.object)
         if (res.data.object.status == this.Globel.defaultRequestStatus) {
           this.bannerList = res.data.object.pageEntity.pageList;
           this.total = res.data.object.pageEntity.total;
@@ -289,18 +346,15 @@
       //新增banner
       addNewBanner() {
 
-        console.log(this.ruleForm)
         this.$axios({
           url: this.Globel.requestUrl + "/banner/mainBannerAdd",
           method: "post",
           data: this.ruleForm
         }).then(res => {
-          console.log(res)
-          console.log(res.data.status)
           if (res.data.status != this.Globel.defaultRequestStatus) {
             this.$message(res.data.msg)
           } else {
-            this.dialogVisible = false;
+            this.addDialogIsShow = false;
 
             //清空输入框
             this.ruleForm.uploadType = "";
@@ -322,11 +376,18 @@
         })
       },
 
-      //撤销banner上传
+      //关闭主页banner新增弹出框
       cancelNewBanner() {
-        this.dialogVisible = false;
+        this.addDialogIsShow = false;
         this.ruleForm.addUploadType = "";
         this.uploadBannerShowUrl = "";
+      },
+
+      /**
+       * 关闭编辑主页广告弹出框
+       * */
+      cancelCompileBanner(){
+        this.compileDialogIsShow = false
       },
 
       //点击搜索
@@ -335,24 +396,20 @@
       },
 
       pageChange(pageNum) {
-        console.log(pageNum)
         this.pageNum = pageNum;
         this.queryMainBannerList()
       },
       handleRemove(file, fileList) {
-        console.log(file, fileList);
       },
 
       //显示上传图片
       handlePictureCardPreview(file) {
-        console.log(file)
         this.uploadBannerIsShow = true
         this.uploadBannerShowUrl = file.url;
       },
 
       //banner上传成功时
       handleUploadSuccess(file) {
-        console.log(file)
         this.ruleForm.qiNiuUploadCallBack = file.hash
       },
 
@@ -366,7 +423,6 @@
 
       //上传的banner状态转换
       statusChange(status) {
-        console.log(status)
         this.ruleForm.mainBannerStatus = status
       },
 
@@ -395,6 +451,9 @@
         })
       },
 
+      /**
+       * 查询主页广告列表
+       * */
       queryMainBannerList() {
         var startTime = "";
         var endTime = "";
@@ -411,8 +470,28 @@
             this.total = res.data.object.pageEntity.total;
           }
         })
-      }
+      },
 
+      /**
+       * 打开编辑主页banner弹出框
+       * */
+      openMainBannerDialog(data, index) {
+        console.log(data)
+        this.compileDialogIsShow = true;
+        this.compileMainBannerData.mainBannerName = data.mainBannerName
+        this.compileMainBannerData.mainBannerUrl = data.mainBannerUrl
+        this.compileMainBannerData.skipUrl = data.skipUrl
+        this.compileMainBannerData.mainBannerStatus = data.mainBannerStatus
+        this.compileMainBannerData.uploadType = data.uploadType == '本地选择' ? 'LOCAL' : 'OUTSIDE'
+        console.log(data)
+      },
+
+      /**
+       * 确认编辑主页广告
+       * */
+      compileMainBanner(){
+
+      }
 
     }
   }

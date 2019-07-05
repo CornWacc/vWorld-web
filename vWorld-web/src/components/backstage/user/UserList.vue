@@ -60,7 +60,9 @@
                     <el-button size="mini" type="primary" @click="updateUser(scope.row)">编辑</el-button>
                   </el-col>
                   <el-col>
-                    <el-button size="mini" @click="delUser(scope.row.userId,scope.$index)" type="danger" style="margin-top: 8px">删除</el-button>
+                    <el-button size="mini" @click="delUser(scope.row.userId,scope.$index)" type="danger"
+                               style="margin-top: 8px">删除
+                    </el-button>
                   </el-col>
                 </el-row>
               </template>
@@ -105,7 +107,8 @@
             active-color="#13ce66"
             inactive-color="#ff4949"
             active-value="OPEN"
-            inactive-value="CLOSE">
+            inactive-value="CLOSE"
+            @change="userStatusChange">
           </el-switch>
         </el-form-item>
       </el-form>
@@ -151,8 +154,8 @@
           userEmail: "",
           userPhone: "",
           userStatus: "",
-          userRoleData: "",
-          userId:""
+          userRoleData: [],
+          userId: ""
         }
       }
     },
@@ -169,7 +172,6 @@
         url: this.Globel.requestUrl + "/role/roleListTreeQuery",
         method: "get"
       }).then(res => {
-        console.log(res.data.object.roleInfos)
         this.data = res.data.object.roleInfos
         this.options = res.data.object.roleInfos
       })
@@ -187,12 +189,10 @@
       }
       ,
       delUser(userId, index) {
-        console.log(index)
         this.$axios({
           url: this.Globel.requestUrl + "/user/userDel?userId=" + userId,
           method: "get"
         }).then(res => {
-          console.log(res);
           if (res.data.object.status == "SUCCESS") {
             this.$message("删除成功")
             this.pageQueryUserList(1)
@@ -208,7 +208,6 @@
           url: this.Globel.requestUrl + "/user/userListPageQuery?type=" + this.keyWordType + "&keyWord=" + this.keyWord + "&pageNum=" + num + "&pageSize=5",
           method: "get"
         }).then(res => {
-          console.log(res)
           this.userList = res.data.object.userInfoList
           this.total = res.data.object.total
         })
@@ -222,10 +221,9 @@
       },
 
       /**
-       * 查询用户通过用户全县
+       * 查询用户通过用户权限
        * */
       searchUserByUserRole(role) {
-        console.log(role)
         this.$axios({
           url: this.Globel.requestUrl + "/user/userListPageQuery?type=userRole" + "&keyWord=" + role.roleId + "&pageNum=" + this.pageNum + "&pageSize=5",
           method: "get"
@@ -246,35 +244,49 @@
         this.compileUser.userEmail = user.userEmail
         this.compileUser.userPhone = user.userPhone
         this.compileUser.userStatus = user.userStatus === "开启" ? "OPEN" : "CLOSE"
-        this.compileUser.userRoleData = user.userRoleId
+        this.compileUser.userRoleData = [user.userRoleId]
       },
       /**
        * 确认更新
        * */
       sureUpdateUser() {
-
+        var userRoleId = ""
+        if (this.compileUser.userRoleData.length > 1) {
+          userRoleId = this.compileUser.userRoleData[this.compileUser.userRoleData.length - 1]
+        } else {
+          userRoleId = this.compileUser.userRoleData[0]
+        }
         var data = {
-          userId:this.compileUser.userId,
+          userId: this.compileUser.userId,
           userName: this.compileUser.userName,
-          updateUserId:localStorage.getItem("userId"),
-          updateUserRoleId:this.$route.query.userRoleId,
-          userEmail:this.compileUser.userEmail,
-          userPhone:this.compileUser.userPhone,
-          userStatus:this.compileUser.userStatus,
-          userRoleId:this.compileUser.userRoleData
+          updateUserId: localStorage.getItem("userId"),
+          updateUserRoleId: localStorage.getItem("userRoleId"),
+          userEmail: this.compileUser.userEmail,
+          userPhone: this.compileUser.userPhone,
+          userStatus: this.compileUser.userStatus,
+          userRoleId: userRoleId
         }
         this.$axios({
-          url:this.Globel.requestUrl+"/user/userUpdate",
-          data:data,
-          method:"POST"
-        }).then(res =>{
-          if(res.data.status == this.Globel.defaultRequestStatus){
+          url: this.Globel.requestUrl + "/user/userUpdate",
+          data: data,
+          method: "POST"
+        }).then(res => {
+          if (res.data.status == this.Globel.defaultRequestStatus) {
             this.dialogVisible = false
+            this.pageQueryUserList(1)
           }
           this.$message(res.data.msg)
         })
+      },
+      /**
+       * 用户状态的切换
+       * */
+      userStatusChange(status){
+        this.compileUser.userStatus = status;
       }
     }
+
+
   }
 </script>
 
