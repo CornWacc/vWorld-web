@@ -1,10 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Login from '@/components/user/Login'
+import LoginAndReg from '@/components/user/LoginAndReg'
 import BackStage from "@/components/backstage/BackStage"
 import UserList from "@/components/backstage/user/UserList"
 import Main from "@/components/main/Main"
-import Reg from '@/components/user/Reg'
 import RoleList from "@/components/backstage/role/RoleList"
 import ProductMainBannerList from '@/components/backstage/banner/ProductMainBannerList'
 import LoginBannerList from '@/components/backstage/banner/LoginBannerList'
@@ -15,8 +14,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Login',
-      component: Login
+      name: 'LoginAndReg',
+      component: LoginAndReg
     },
     {
       path: '/backStage',
@@ -49,11 +48,5 @@ export default new Router({
       name:"Main",
       component:Main
     },
-
-    {
-      path:"/reg",
-      name:"Reg",
-      component:Reg
-    }
   ]
 })

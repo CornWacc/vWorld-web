@@ -252,9 +252,6 @@
             {required: true, message: '请输入Banner名称', trigger: 'blur'},
             {min: 3, max: 20, message: '长度在 3 到 10 个字符', trigger: 'blur'}
           ],
-          weight: [
-            {required: true, message: '请选择权重', trigger: 'blur'},
-          ],
           uploadType:[{
             required:true,message:"请选择上传类型"
           }]
