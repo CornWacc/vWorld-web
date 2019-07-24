@@ -234,10 +234,10 @@
     },
     mounted() {
       this.$axios({
-        url: this.Globel.requestUrl + "/banner/loginBannerListPageQuery",
-        method: "GET"
+        url: this.Globel.requestUrl + "/banner/loginBannerListPageQuery?pageNum="+this.pageNum+"&pageSize="+this.pageSize,
+        method: "GET",
+
       }).then(res => {
-        console.log(res)
         if (res.data.status == this.Globel.defaultRequestStatus) {
           this.bannerList = res.data.object.pageEntity.pageList;
           this.total = res.data.object.pageEntity.total;
@@ -275,7 +275,7 @@
 
             //reload
             this.$axios({
-              url: this.Globel.requestUrl + "/banner/loginBannerListPageQuery",
+              url: this.Globel.requestUrl + "/banner/loginBannerListPageQuery?pageNum="+this.pageNum+"&pageSize="+this.pageSize,
               method: "GET"
             }).then(res => {
               if (res.data.object.status == this.Globel.defaultRequestStatus) {
@@ -368,7 +368,7 @@
           endTime = this.searchTime[1];
         }
         this.$axios({
-          url: this.Globel.requestUrl + "/banner/mainBannerListPageQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize + "&startTime=" + startTime + "&endTime=" + endTime + "&mainBannerStatus=" + this.chooseBannerStatus,
+          url: this.Globel.requestUrl + "/banner/loginBannerListPageQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize + "&startTime=" + startTime + "&endTime=" + endTime + "&mainBannerStatus=" + this.chooseBannerStatus,
           method: "GET"
         }).then(res => {
           if (res.data.object.status == this.Globel.defaultRequestStatus) {

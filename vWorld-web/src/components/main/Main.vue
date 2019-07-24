@@ -95,7 +95,7 @@
           "12a3", "12a3"
         ],
         isAdmin: false, //是否为管理员
-        fits: "cover",
+        fits: "fit",
         that: this
       }
     },
@@ -215,7 +215,7 @@
 
   .swiper-show {
     width: 100%;
-    height: 410px;
+    height: 470px;
     margin-top: 10px;
     box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.1);
   }

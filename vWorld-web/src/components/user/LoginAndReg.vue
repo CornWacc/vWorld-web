@@ -11,8 +11,8 @@
       <div class="left-model">
         <div class="swiper-container">
           <div class="swiper-wrapper">
-            <div class="swiper-slide" v-for="item in img" :key="item">
-              <el-image :src="item" style="height: 100%" :fit="fit"></el-image>
+            <div class="swiper-slide" v-for="item in bannerList" :key="item.loginBannerId">
+              <el-image @click="skip(item)" :src="item.loginBannerUrl" :alt="item.loginBannerName" style="height: 100%" :fit="fit"></el-image>
             </div>
           </div>
           <div class="swiper-pagination"></div>
@@ -133,19 +133,19 @@
           return callback();
         }
       };
-      const checkImageCode = (rule,value,callback) => {
-        if(!value){
+      const checkImageCode = (rule, value, callback) => {
+        if (!value) {
           return callback(new Error("验证码不能为空"))
-        }else if(value !== this.imageCode.code){
+        } else if (value !== this.imageCode.code) {
           return callback(new Error("验证码输入错误"))
-        }else{
+        } else {
           return callback();
         }
       }
       return {
-        imageCode:{
-          src:"",
-          code:""
+        imageCode: {
+          src: "",
+          code: ""
         },
         loginForm: {
           userAccount: "", //用户登录账号
@@ -181,38 +181,52 @@
           email: [{validator: checkEmail, trigger: 'blur'}],
           imageCode: [{validator: checkImageCode, trigger: 'blur'}]
         },
-        img: [],
+        bannerList: [],
         fit: "cover",
         isLoginModel: true //是否为登录框
       };
     },
     mounted() {
-      var swiper = new Swiper('.swiper-container', {
-        autoplay: {
-          delay: 3500,
-          stopOnLastSlide: false,
-          disableOnInteraction: false,
-        },
-        effect: 'fade',
-        // loop: true,
-        grabCursor: true,
-        pagination: {
-          el: '.swiper-pagination',
-        },
-      })
-
-      this.$axios({
-        method: "get",
-        url: this.Globel.requestUrl + "/api/imageCode",
-        data: {}
-      }).then(res => {
-        console.log(res)
-        this.imageCode.src = "data:image/jpeg;base64," + res.data.msg
-        this.imageCode.code = res.data.object.code
-      })
+      setTimeout(function () {
+        var swiper = new Swiper('.swiper-container', {
+          autoplay: {
+            delay: 100000,
+            stopOnLastSlide: false,
+            disableOnInteraction: false,
+          },
+          effect: 'fade',
+          // loop: true,
+          grabCursor: true,
+          pagination: {
+            el: '.swiper-pagination',
+          },
+        })
+      },500)
+      this.getImage()
+      this.getBanner()
     },
     methods: {
-
+      getImage() {
+        this.$axios({
+          method: "get",
+          url: this.Globel.requestUrl + "/api/imageCode",
+          data: {}
+        }).then(res => {
+          this.imageCode.src = "data:image/jpeg;base64," + res.data.msg
+          this.imageCode.code = res.data.object.code
+        })
+      },
+      getBanner() {
+        this.$axios({
+          url: this.Globel.requestUrl + "/banner/loginBannerListPageQuery?mainBannerStatus=OPEN&pageNum=0&pageSize=0",
+          method: "GET",
+        }).then(res => {
+          console.log(res)
+          if (res.data.status == this.Globel.defaultRequestStatus) {
+            this.bannerList = res.data.object.pageEntity.pageList;
+          }
+        })
+      },
       login() {
 
         this.$refs["form"].validate(valid => {
@@ -223,7 +237,7 @@
               data: {
                 userAccount: this.loginForm.userAccount, //用户登陆账号
                 userPassword: this.loginForm.userPassword, //用户登陆密码
-                imageCode:this.loginForm.imageCode
+                imageCode: this.loginForm.imageCode
               },
               url: this.Globel.requestUrl + "/user/userLogin"
 
@@ -283,6 +297,13 @@
           this.imageCode.src = "data:image/jpeg;base64," + res.data.msg
           this.imageCode.code = res.data.object.code
         })
+
+      },
+      //页面跳转
+      skip(data){
+        if(data.skipUrl != ""){
+          window.location.href = "http://"+data.skipUrl
+        }
       }
     }
   }

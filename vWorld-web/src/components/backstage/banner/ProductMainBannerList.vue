@@ -322,7 +322,7 @@
     },
     mounted() {
       this.$axios({
-        url: this.Globel.requestUrl + "/banner/mainBannerListPageQuery",
+        url: this.Globel.requestUrl + "/banner/mainBannerListPageQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize,
         method: "GET"
       }).then(res => {
         console.log(res.data.object)
@@ -361,7 +361,7 @@
 
             //reload
             this.$axios({
-              url: this.Globel.requestUrl + "/banner/mainBannerListPageQuery",
+              url: this.Globel.requestUrl + "/banner/mainBannerListPageQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize,
               method: "GET"
             }).then(res => {
               if (res.data.object.status == this.Globel.defaultRequestStatus) {
