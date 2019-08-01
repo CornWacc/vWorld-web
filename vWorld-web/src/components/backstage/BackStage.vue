@@ -145,16 +145,15 @@
 
   .aside-title {
     width: 100%;
-    /*border: 1px solid green;*/
-    padding-top: 6px;
+    padding-top: 12px;
   }
 
   .aside-title-image {
-    background: url("../../img/login/shop.png");
+    background: url("../../img/login/headerImage.png");
     width: 46px;
     height: 46px;
     background-size: cover;
-    margin-left: 26px;
+    margin-left: 38px;
   }
 
   .aside-title-font {

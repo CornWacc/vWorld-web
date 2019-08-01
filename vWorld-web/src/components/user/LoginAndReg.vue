@@ -399,9 +399,9 @@
   .header-img {
     width: 50px;
     height: 50px;
-    background: url("../../img/login/shop.png");
+    background: url("../../img/login/headerImage.png");
     background-size: cover;
-    margin-left: 42px;
+    margin-left: 52px;
     position: relative;
     top: 14px;
   }
@@ -410,7 +410,7 @@
     margin-top: 0px;
     width: 80px;
     position: relative;
-    left: 56px;
+    left: 50px;
     top: 10px;
     font-size: 24px;
   }

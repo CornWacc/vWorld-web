@@ -228,7 +228,7 @@
   .header-img {
     width: 60px;
     height: 60px;
-    background: url("../../img/login/shop.png");
+    background: url("../../img/login/headerImage.png");
     background-size: cover;
     position: relative;
     left: 60px;
@@ -239,7 +239,7 @@
     width: 100px;
     display: block;
     position: relative;
-    left: 56px;
+    left: 50px;
     top: 12px;
     font-size: 26px;
   }
