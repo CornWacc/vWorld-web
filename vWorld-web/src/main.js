@@ -9,7 +9,9 @@ import axios from 'axios'
 // import Swiper from "swiper"
 import 'swiper/dist/css/swiper.css'
 import './assets/iconFont/iconfont.css'
-import  Globel from './Globel'
+import './assets/font_n7lakczx9p/iconfont.css'
+import  Globel from './globel'
+
 Vue.use(element)
 // Vue.use(Swiper)
 Vue.prototype.$axios = axios

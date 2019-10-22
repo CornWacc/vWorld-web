@@ -12,7 +12,8 @@
         <div class="swiper-container">
           <div class="swiper-wrapper">
             <div class="swiper-slide" v-for="item in bannerList" :key="item.loginBannerId">
-              <el-image @click="skip(item)" :src="item.loginBannerUrl" :alt="item.loginBannerName" style="height: 100%" :fit="fit"></el-image>
+              <el-image @click="skip(item)" :src="item.loginBannerUrl" :alt="item.loginBannerName" style="height: 100%"
+                        :fit="fit"></el-image>
             </div>
           </div>
           <div class="swiper-pagination"></div>
@@ -42,17 +43,6 @@
                 <el-input v-model="loginForm.userPassword" placeholder="请输入登录密码" suffix-icon="el-icon-caret-bottom"
                           @keydown.native.enter="login" show-password></el-input>
               </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row :gutter=24 class="imageCode" style="margin-top: 30px">
-            <el-col :span="9" :offset="6">
-              <el-form-item prop="imageCode">
-                <el-input v-model="loginForm.imageCode" placeholder="请输入验证码" suffix-icon="el-icon-caret-bottom"
-                          @keydown.native.enter="login"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-image @click="reloadImageCode" style="width: 100px;height: 40px" :src="imageCode.src"></el-image>
             </el-col>
           </el-row>
           <el-button class="login" @click="login" round>登&nbsp录</el-button>
@@ -109,204 +99,180 @@
 </template>
 
 <script>
-  import Swiper from 'swiper'
+    import Swiper from 'swiper'
 
-  export default {
-    name: "Login",
-    data() {
-      const checkPassword = (rule, value, callback) => {
-        if (!value) {
-          callback(new Error('请再次输入密码!'));
-        } else if (value !== this.regForm.regUserPassword) {
-          callback(new Error("两次密码输入不一致!"));
-        } else {
-          callback();
-        }
-      };
-      var checkEmail = (rule, value, callback) => {
-        var regEmail = /^[A-Za-z1-9]+([-_.][A-Za-z1-9]+)*@([A-Za-z1-9]+[-.])+[A-Za-z]{2,5}$/;
-        if (!value) {
-          return callback(new Error('注册邮箱不能为空!'))
-        } else if (!regEmail.test(value)) {
-          return callback(new Error("邮箱格式不正确!"))
-        } else {
-          return callback();
-        }
-      };
-      const checkImageCode = (rule, value, callback) => {
-        if (!value) {
-          return callback(new Error("验证码不能为空"))
-        } else if (value !== this.imageCode.code) {
-          return callback(new Error("验证码输入错误"))
-        } else {
-          return callback();
-        }
-      }
-      return {
-        imageCode: {
-          src: "",
-          code: ""
+    export default {
+        name: "Login",
+        data() {
+            const checkPassword = (rule, value, callback) => {
+                if (!value) {
+                    callback(new Error('请确认输入密码!'));
+                } else if (value !== this.regForm.regUserPassword) {
+                    callback(new Error("两次密码输入不一致!"));
+                } else {
+                    callback();
+                }
+            };
+            let checkEmail = (rule, value, callback) => {
+                const regEmail = /^[A-Za-z1-9]+([-_.][A-Za-z1-9]+)*@([A-Za-z1-9]+[-.])+[A-Za-z]{2,5}$/;
+                if (!value) {
+                    return callback(new Error('注册邮箱不能为空!'))
+                } else if (!regEmail.test(value)) {
+                    return callback(new Error("邮箱格式不正确!"))
+                } else {
+                    return callback();
+                }
+            };
+            const checkImageCode = (rule, value, callback) => {
+                if (!value) {
+                    return callback(new Error("验证码不能为空"))
+                } else if (value !== this.imageCode.code) {
+                    return callback(new Error("验证码输入错误"))
+                } else {
+                    return callback();
+                }
+            }
+            return {
+                loginForm: {
+                    userAccount: "", //用户登录账号
+                    userPassword: "", //用户登陆密码
+                    imageCode: ""
+                },
+                regForm: {
+                    regUserAccount: "", //用户注册账号
+                    regUserPassword: "", //用户注册密码
+                    rePassword: "",
+                    email: ""
+                },
+                rules: {
+                    userAccount: [
+                        {required: true, message: '请输入登陆账号', trigger: 'blur'},
+                        {min: 1, message: '长度不能小于1个字', trigger: 'blur'}
+                    ],
+                    userPassword: [
+                        {required: true, message: '请输入登陆密码', trigger: 'blur'},
+                        {min: 1, message: '长度不能小于1个字', trigger: 'blur'}
+                    ],
+                    regUserAccount: [
+                        {required: true, message: '请输入注册账号', trigger: 'blur'},
+                        {min: 1, message: '长度不能小于1个字', trigger: 'blur'}
+                    ],
+                    regUserPassword: [
+                        {required: true, message: '请输入注册密码', trigger: 'blur'},
+                        {min: 1, message: '长度不能小于1个字', trigger: 'blur'}
+                    ],
+                    rePassword: [
+                        {validator: checkPassword, trigger: 'blur'}
+                    ],
+                    email: [{validator: checkEmail, trigger: 'blur'}],
+                    imageCode: [{validator: checkImageCode, trigger: 'blur'}]
+                },
+                bannerList: [],
+                fit: "cover",
+                isLoginModel: true //是否为登录框
+            };
         },
-        loginForm: {
-          userAccount: "", //用户登录账号
-          userPassword: "", //用户登陆密码
-          imageCode: ""
-        },
-        regForm: {
-          regUserAccount: "", //用户注册账号
-          regUserPassword: "", //用户注册密码
-          rePassword: "",
-          email: ""
-        },
-        rules: {
-          userAccount: [
-            {required: true, message: '请输入登陆账号', trigger: 'blur'},
-            {min: 1, message: '长度不能小于1个字', trigger: 'blur'}
-          ],
-          userPassword: [
-            {required: true, message: '请输入登陆密码', trigger: 'blur'},
-            {min: 1, message: '长度不能小于1个字', trigger: 'blur'}
-          ],
-          regUserAccount: [
-            {required: true, message: '请输入注册账号', trigger: 'blur'},
-            {min: 1, message: '长度不能小于1个字', trigger: 'blur'}
-          ],
-          regUserPassword: [
-            {required: true, message: '请输入注册密码', trigger: 'blur'},
-            {min: 1, message: '长度不能小于1个字', trigger: 'blur'}
-          ],
-          rePassword: [
-            {validator: checkPassword, trigger: 'blur'}
-          ],
-          email: [{validator: checkEmail, trigger: 'blur'}],
-          imageCode: [{validator: checkImageCode, trigger: 'blur'}]
-        },
-        bannerList: [],
-        fit: "cover",
-        isLoginModel: true //是否为登录框
-      };
-    },
-    mounted() {
-      setTimeout(function () {
-        var swiper = new Swiper('.swiper-container', {
-          autoplay: {
-            delay: 100000,
-            stopOnLastSlide: false,
-            disableOnInteraction: false,
-          },
-          effect: 'fade',
-          // loop: true,
-          grabCursor: true,
-          pagination: {
-            el: '.swiper-pagination',
-          },
-        })
-      },500)
-      this.getImage()
-      this.getBanner()
-    },
-    methods: {
-      getImage() {
-        this.$axios({
-          method: "get",
-          url: this.Globel.requestUrl + "/api/imageCode",
-          data: {}
-        }).then(res => {
-          this.imageCode.src = "data:image/jpeg;base64," + res.data.msg
-          this.imageCode.code = res.data.object.code
-        })
-      },
-      getBanner() {
-        this.$axios({
-          url: this.Globel.requestUrl + "/banner/loginBannerListPageQuery?mainBannerStatus=OPEN&pageNum=0&pageSize=0",
-          method: "GET",
-        }).then(res => {
-          console.log(res)
-          if (res.data.status == this.Globel.defaultRequestStatus) {
-            this.bannerList = res.data.object.pageEntity.pageList;
-          }
-        })
-      },
-      login() {
-
-        this.$refs["form"].validate(valid => {
-          if (valid) {
-            this.$axios({
-
-              method: "post",
-              data: {
-                userAccount: this.loginForm.userAccount, //用户登陆账号
-                userPassword: this.loginForm.userPassword, //用户登陆密码
-                imageCode: this.loginForm.imageCode
-              },
-              url: this.Globel.requestUrl + "/user/userLogin"
-
-            }).then(res => {
-              console.log(res)
-              if (res.data.status == this.Globel.defaultRequestStatus) {
-                //登陆成功后设置token
-                localStorage.setItem("userToken", res.data.object.userToken)
-                //设置UserId
-                localStorage.setItem("userId", res.data.object.userId)
-                //登陆成功跳转主页
-                this.$router.push("/main")
-
-              } else {
-                this.$alert(res.data.msg, "错误", {
-                  confirmButtonText: '确定',
+        mounted() {
+            setTimeout(function () {
+                const swiper = new Swiper('.swiper-container', {
+                    autoplay: {
+                        delay: 100000,
+                        stopOnLastSlide: false,
+                        disableOnInteraction: false,
+                    },
+                    effect: 'fade',
+                    // loop: true,
+                    grabCursor: true,
+                    pagination: {
+                        el: '.swiper-pagination',
+                    },
                 })
-              }
-            })
-          }
-        })
-      },
+            }, 500)
+            this.getBanner()
+        },
+        methods: {
+            getBanner() {
+                this.$axios({
+                    url: this.Globel.requestUrl + "/banner/loginBannerListPageQuery?mainBannerStatus=OPEN&pageNum=1&pageSize=5",
+                    method: "GET",
+                }).then(res => {
+                    console.log(res)
+                    if (res.data.success) {
+                        this.bannerList = res.data.data.pageEntity.pageList;
+                    }
+                })
+            },
+            login() {
+                this.$refs["form"].validate(valid => {
+                    if (valid) {
+                        this.$axios({
+                            method: "post",
+                            data: {
+                                userAccount: this.loginForm.userAccount, //用户登陆账号
+                                userPassword: this.loginForm.userPassword, //用户登陆密码
+                                imageCode: this.loginForm.imageCode
+                            },
+                            url: this.Globel.requestUrl + "/user/userLogin"
 
-      toReg() {
-        this.isLoginModel = false
-      },
-      toLogin() {
-        this.isLoginModel = true
-      },
-      reg() {
-        this.$refs["regForm"].validate(valid => {
-          if (valid) {
-            this.$axios({
-              url: this.Globel.requestUrl + "/user/userReg",
-              data: {
-                userAccount: this.regForm.regUserAccount,
-                userPassword: this.regForm.regUserPassword,
-                userEmail: this.regForm.email,
-              },
-              method: "post"
-            }).then(res => {
-              console.log(res)
-              if (res.data.status == this.Globel.defaultRequestStatus) {
+                        }).then(res => {
+                            console.log(res)
+                            if (res.data.success) {
+                                //登陆成功后设置token
+                                localStorage.setItem("userToken", res.data.data.userToken)
+                                //设置UserId
+                                localStorage.setItem("userId", res.data.data.userId)
+                                //登陆成功跳转主页
+                                this.$router.push("/main")
+
+                            } else {
+                                this.$alert(res.data.msg, "错误", {
+                                    confirmButtonText: '确定',
+                                })
+                            }
+                        })
+                    }
+                })
+            },
+
+            toReg() {
+                this.isLoginModel = false
+            },
+            toLogin() {
                 this.isLoginModel = true
-              }
-              this.$message(res.data.msg)
-            })
-          }
-        })
-      },
-      //刷新验证码
-      reloadImageCode() {
-        this.$axios({
-          url: this.Globel.requestUrl + "/api/imageCode?oldImageCode=" + this.imageCode.code,
-          method: "get"
-        }).then(res => {
-          this.imageCode.src = "data:image/jpeg;base64," + res.data.msg
-          this.imageCode.code = res.data.object.code
-        })
+            },
 
-      },
-      //页面跳转
-      skip(data){
-        if(data.skipUrl != ""){
-          window.location.href = "http://"+data.skipUrl
+            /**
+             * 用户注册
+             * */
+            reg() {
+                this.$refs["regForm"].validate(valid => {
+                    if (valid) {
+                        this.$axios({
+                            url: this.Globel.requestUrl + "/user/userReg",
+                            data: {
+                                userAccount: this.regForm.regUserAccount,
+                                userPassword: this.regForm.regUserPassword,
+                                userEmail: this.regForm.email,
+                            },
+                            method: "post"
+                        }).then(res => {
+                            console.log(res)
+                            if (res.data.success) {
+                                this.isLoginModel = true
+                            }
+                            this.$message(res.data.msg)
+                        })
+                    }
+                })
+            },
+            //页面跳转
+            skip(data) {
+                if (data.skipUrl != "") {
+                    window.location.href = "http://" + data.skipUrl
+                }
+            }
         }
-      }
     }
-  }
 </script>
 
 <style scoped>

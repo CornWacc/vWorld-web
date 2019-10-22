@@ -1,0 +1,30 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "436377",
+      "name": "钱",
+      "font_class": "50",
+      "unicode": "e632",
+      "unicode_decimal": 58930
+    },
+    {
+      "icon_id": "975340",
+      "name": "免费",
+      "font_class": "mianfei",
+      "unicode": "e62f",
+      "unicode_decimal": 58927
+    },
+    {
+      "icon_id": "8361795",
+      "name": "火",
+      "font_class": "huo",
+      "unicode": "e6c2",
+      "unicode_decimal": 59074
+    }
+  ]
+}

@@ -174,19 +174,18 @@
         url: this.Globel.requestUrl + "/role/roleListPageQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize,
         method: "get"
       }).then(res => {
-        if (res.data.object.status == "SUCCESS") {
-          this.roleListInfo = res.data.object.roleInfosList
-          this.total = res.data.object.total
+        if (res.data.success) {
+          this.roleListInfo = res.data.data.roleInfosList
+          this.total = res.data.data.total
         }
       })
       this.$axios({
         url: this.Globel.requestUrl + "/role/roleListQueryByLevel?roleLevel=3",
         method: "get"
       }).then(res => {
-        if (res.data.object.status == "SUCCESS") {
-          console.log(res.data.object)
-          this.oneLevelOption = res.data.object.levelOneRoleList
-          this.twoLevelOption = res.data.object.levelTwoRoleList
+        if (res.data.success) {
+          this.oneLevelOption = res.data.data.levelOneRoleList
+          this.twoLevelOption = res.data.data.levelTwoRoleList
         }
       })
     },
@@ -202,9 +201,9 @@
             url: this.Globel.requestUrl + "/role/roleListPageQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize + "&byUserId=" + this.byUserId + "&roleLevel=" + this.roleLevel + "&createTime=" + startTime + "&endTime=" + endTime,
             method: "get"
           }).then(res => {
-            if (res.data.object.status == "SUCCESS") {
-              this.roleListInfo = res.data.object.roleInfosList
-              this.total = res.data.object.total
+            if (res.data.success) {
+              this.roleListInfo = res.data.data.roleInfosList
+              this.total = res.data.data.total
             } else {
               this.roleListInfo = []
             }
@@ -214,9 +213,9 @@
             url: this.Globel.requestUrl + "/role/roleListPageQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize + "&byUserId=" + this.byUserId + "&roleLevel=" + this.roleLevel,
             method: "get"
           }).then(res => {
-            if (res.data.object.status == "SUCCESS") {
-              this.roleListInfo = res.data.object.roleInfosList
-              this.total = res.data.object.total
+            if (res.data.success) {
+              this.roleListInfo = res.data.data.roleInfosList
+              this.total = res.data.data.total
             } else {
               this.roleListInfo = []
             }
@@ -236,9 +235,9 @@
             url: this.Globel.requestUrl + "/role/roleListPageQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize + "&byUserId=" + this.byUserId + "&roleLevel=" + this.roleLevel + "&createTime=" + startTime + "&endTime=" + endTime,
             method: "get"
           }).then(res => {
-            if (res.data.object.status == "SUCCESS") {
-              this.roleListInfo = res.data.object.roleInfosList
-              this.total = res.data.object.total
+            if (res.data.success) {
+              this.roleListInfo = res.data.data.roleInfosList
+              this.total = res.data.data.total
             }
           })
         } else {
@@ -246,9 +245,9 @@
             url: this.Globel.requestUrl + "/role/roleListPageQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize + "&byUserId=" + this.byUserId + "&roleLevel=" + this.roleLeve,
             method: "get"
           }).then(res => {
-            if (res.data.object.status == "SUCCESS") {
-              this.roleListInfo = res.data.object.roleInfosList
-              this.total = res.data.object.total
+            if (res.data.success) {
+              this.roleListInfo = res.data.data.roleInfosList
+              this.total = res.data.data.total
             }
           })
         }
@@ -262,9 +261,9 @@
             url: this.Globel.requestUrl + "/role/roleListPageQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize + "&byUserId=" + this.byUserId + "&roleLevel=" + this.roleLevel + "&createTime=" + startTime + "&endTime=" + endTime,
             method: "get"
           }).then(res => {
-            if (res.data.object.status == "SUCCESS") {
-              this.roleListInfo = res.data.object.roleInfosList
-              this.total = res.data.object.total
+            if (res.data.success) {
+              this.roleListInfo = res.data.data.roleInfosList
+              this.total = res.data.data.total
             }
           })
         } else {
@@ -272,9 +271,9 @@
             url: this.Globel.requestUrl + "/role/roleListPageQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize + "&byUserId=" + this.byUserId + "&roleLevel=" + this.roleLevel,
             method: "get"
           }).then(res => {
-            if (res.data.object.status == "SUCCESS") {
-              this.roleListInfo = res.data.object.roleInfosList
-              this.total = res.data.object.total
+            if (res.data.success) {
+              this.roleListInfo = res.data.data.roleInfosList
+              this.total = res.data.data.total
             }
           })
         }
@@ -286,8 +285,8 @@
           url: this.Globel.requestUrl + "/role/roleListQueryBySuperiorId?roleParentId=" + r,
           method: "get"
         }).then(res => {
-          if (res.data.object.status == "SUCCESS") {
-            this.twoLevelOption = res.data.object.roleInfosList
+          if (res.data.success) {
+            this.twoLevelOption = res.data.data.roleInfosList
           }
         })
       },
@@ -310,7 +309,7 @@
 
           method: "post"
         }).then(res => {
-          if (res.data.object.status == "SUCCESS") {
+          if (res.data.success) {
             this.dialogVisible = false
             this.createRoleName = ""
             this.createRoleLevel = ""
@@ -321,17 +320,17 @@
               url: this.Globel.requestUrl + "/role/roleListQueryByLevel?roleLevel=3",
               method: "get"
             }).then(res => {
-              if (res.data.object.status == "SUCCESS") {
-                this.oneLevelOption = res.data.object.levelOneRoleList
-                this.twoLevelOption = res.data.object.levelTwoRoleList
+              if (res.data.success) {
+                this.oneLevelOption = res.data.data.levelOneRoleList
+                this.twoLevelOption = res.data.data.levelTwoRoleList
                 this.$axios({
                   url: this.Globel.requestUrl + "/role/roleListPageQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize,
                   method: "get"
                 }).then(res => {
-                  if (res.data.object.status == "SUCCESS") {
-                    this.roleListInfo = res.data.object.roleInfosList
+                  if (res.data.success) {
+                    this.roleListInfo = res.data.data.roleInfosList
                     console.log(res)
-                    this.total = res.data.object.total
+                    this.total = res.data.data.total
                   }
                 })
               }
@@ -354,9 +353,9 @@
             url: this.Globel.requestUrl + "/role/roleListPageQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize,
             method: "get"
           }).then(res => {
-            if (res.data.object.status == "SUCCESS") {
-              this.roleListInfo = res.data.object.roleInfosList
-              this.total = res.data.object.total
+            if (res.data.success) {
+              this.roleListInfo = res.data.data.roleInfosList
+              this.total = res.data.data.total
             }
           })
         })

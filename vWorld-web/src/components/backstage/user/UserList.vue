@@ -13,7 +13,7 @@
           <el-form :inline="inline" class="search">
             <el-input class="input-keyWord" v-model="keyWord" placeholder="名称/手机号/邮箱"></el-input>
             <el-button @click="doSearch" style="margin-left: 10px">搜索</el-button>
-            <el-button>导出</el-button>
+            <el-button type="primary">导出</el-button>
           </el-form>
           <el-table :data="userList" style="width: 100%;max-width: none">
             <el-table-column
@@ -164,16 +164,16 @@
         url: this.Globel.requestUrl + "/user/userListPageQuery?type=" + this.keyWordType + "&keyWord=" + this.keyWord + "&pageNum=" + this.pageNum + "&pageSize=5",
         method: "get"
       }).then(res => {
-        this.userList = res.data.object.userInfoList
-        this.total = res.data.object.total
+        this.userList = res.data.data.userInfoList
+        this.total = res.data.data.total
       })
 
       this.$axios({
         url: this.Globel.requestUrl + "/role/roleListTreeQuery",
         method: "get"
       }).then(res => {
-        this.data = res.data.object.roleInfos
-        this.options = res.data.object.roleInfos
+        this.data = res.data.data.roleInfos
+        this.options = res.data.data.roleInfos
       })
     }
     ,
@@ -193,7 +193,7 @@
           url: this.Globel.requestUrl + "/user/userDel?userId=" + userId,
           method: "get"
         }).then(res => {
-          if (res.data.object.status == "SUCCESS") {
+          if (res.data.success) {
             this.$message("删除成功")
             this.pageQueryUserList(1)
           }
@@ -208,8 +208,8 @@
           url: this.Globel.requestUrl + "/user/userListPageQuery?type=" + this.keyWordType + "&keyWord=" + this.keyWord + "&pageNum=" + num + "&pageSize=5",
           method: "get"
         }).then(res => {
-          this.userList = res.data.object.userInfoList
-          this.total = res.data.object.total
+          this.userList = res.data.data.userInfoList
+          this.total = res.data.data.total
         })
       },
       handleClose(key, keyPath) {
@@ -229,8 +229,8 @@
           method: "get"
         }).then(res => {
           console.log(res)
-          this.userList = res.data.object.userInfoList
-          this.total = res.data.object.total
+          this.userList = res.data.data.userInfoList
+          this.total = res.data.data.total
         })
       },
 
@@ -271,7 +271,7 @@
           data: data,
           method: "POST"
         }).then(res => {
-          if (res.data.status == this.Globel.defaultRequestStatus) {
+          if (res.data.success) {
             this.dialogVisible = false
             this.pageQueryUserList(1)
           }

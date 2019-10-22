@@ -162,7 +162,8 @@
       :visible.sync="compileDialogIsShow"
       @close="dialogClose"
     >
-      <el-form :model="compileMainBannerData" :rules="rules" ref="ruleForm" label-width="120px" :label-position="labelPosition">
+      <el-form :model="compileMainBannerData" :rules="rules" ref="ruleForm" label-width="120px"
+               :label-position="labelPosition">
         <el-form-item label="图片名称:" prop="mainBannerName">
           <el-input v-model="compileMainBannerData.mainBannerName"></el-input>
         </el-form-item>
@@ -170,7 +171,8 @@
           <el-input v-model="compileMainBannerData.skipUrl"></el-input>
         </el-form-item>
         <el-form-item label="上传类型:" prop="uploadType">
-          <el-select style="width: 100%" placeholder="请选择banner上传类型" clearable v-model="compileMainBannerData.uploadType">
+          <el-select style="width: 100%" placeholder="请选择banner上传类型" clearable
+                     v-model="compileMainBannerData.uploadType">
             <el-option
               v-for="item in uploadTypes"
               :key="item.code"
@@ -230,268 +232,268 @@
 
 <script>
 
-  export default {
-    name: "ProductMainBannerBackStage",
-    data() {
-      return {
-        inline: false,
-        searchTime: null,
-        addDialogIsShow: false,
-        compileDialogIsShow: false,
-        labelPosition: "left",
-        ruleForm: {
-          mainBannerName: "", //新增图片名称
-          skipUrl: "", //新增跳转url
-          uploadType: "", //新增图片上传类型
-          mainBannerUrl: "", //新增图片地址,
-          qiNiuUploadCallBack: "", //七牛回调hash值
-          mainBannerStatus: "CLOSE" //banner状态
+    export default {
+        name: "ProductMainBannerBackStage",
+        data() {
+            return {
+                inline: false,
+                searchTime: null,
+                addDialogIsShow: false,
+                compileDialogIsShow: false,
+                labelPosition: "left",
+                ruleForm: {
+                    mainBannerName: "", //新增图片名称
+                    skipUrl: "", //新增跳转url
+                    uploadType: "", //新增图片上传类型
+                    mainBannerUrl: "", //新增图片地址,
+                    qiNiuUploadCallBack: "", //七牛回调hash值
+                    mainBannerStatus: "CLOSE" //banner状态
+                },
+                rules: {
+                    mainBannerName: [
+                        {required: true, message: '请输入Banner名称', trigger: 'blur'},
+                        {min: 3, max: 20, message: '长度在 3 到 10 个字符', trigger: 'blur'}
+                    ],
+                    uploadType: [{
+                        required: true, message: "请选择上传类型"
+                    }]
+
+                },
+                chooseBannerStatus: "", //选择的广告状态
+                bannerList: [], //banner列表
+                bannerStatusList: [
+
+                    {
+                        code: "OPEN",
+                        msg: "开启"
+                    },
+                    {
+                        code: "CLOSE",
+                        msg: "关闭"
+                    }
+                ],
+                uploadTypes: [
+                    {
+                        code: "OUTSIDE",
+                        msg: "外链"
+                    },
+                    {
+                        code: "LOCAL",
+                        msg: "本地选择"
+                    }
+                ],
+                bannerWeights: [
+                    {
+                        code: 1,
+                        msg: "1"
+                    },
+                    {
+                        code: 2,
+                        msg: "2"
+                    },
+                    {
+                        code: 3,
+                        msg: "3"
+                    },
+                    {
+                        code: 4,
+                        msg: "4"
+                    },
+                    {
+                        code: 5,
+                        msg: "5"
+                    }
+                ],
+                pageNum: 1, //页码
+                pageSize: 10, //每页大小
+                total: 0, //总条数
+                uploadBannerIsShow: false,  //上传部件是否现实
+                uploadBannerShowUrl: "",
+                qiNiuUploadData: {
+                    token: "",
+                    callBackHash: ""
+                },
+                compileMainBannerData: {
+                    mainBannerName: "",
+                    mainBannerStatus: "",
+                    skipUrl: "",
+                    mainBannerUrl: "",
+                    uploadType: ""
+                }
+            }
         },
-        rules: {
-          mainBannerName: [
-            {required: true, message: '请输入Banner名称', trigger: 'blur'},
-            {min: 3, max: 20, message: '长度在 3 到 10 个字符', trigger: 'blur'}
-          ],
-          uploadType:[{
-            required:true,message:"请选择上传类型"
-          }]
-
-        },
-        chooseBannerStatus: "", //选择的广告状态
-        bannerList: [], //banner列表
-        bannerStatusList: [
-
-          {
-            code: "OPEN",
-            msg: "开启"
-          },
-          {
-            code: "CLOSE",
-            msg: "关闭"
-          }
-        ],
-        uploadTypes: [
-          {
-            code: "OUTSIDE",
-            msg: "外链"
-          },
-          {
-            code: "LOCAL",
-            msg: "本地选择"
-          }
-        ],
-        bannerWeights: [
-          {
-            code: 1,
-            msg: "1"
-          },
-          {
-            code: 2,
-            msg: "2"
-          },
-          {
-            code: 3,
-            msg: "3"
-          },
-          {
-            code: 4,
-            msg: "4"
-          },
-          {
-            code: 5,
-            msg: "5"
-          }
-        ],
-        pageNum: 1, //页码
-        pageSize: 10, //每页大小
-        total: 0, //总条数
-        uploadBannerIsShow: false,  //上传部件是否现实
-        uploadBannerShowUrl: "",
-        qiNiuUploadData: {
-          token: "",
-          callBackHash: ""
-        },
-        compileMainBannerData:{
-          mainBannerName:"",
-          mainBannerStatus:"",
-          skipUrl:"",
-          mainBannerUrl:"",
-          uploadType:""
-        }
-      }
-    },
-    mounted() {
-      this.$axios({
-        url: this.Globel.requestUrl + "/banner/mainBannerListPageQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize,
-        method: "GET"
-      }).then(res => {
-        console.log(res.data.object)
-        if (res.data.object.status == this.Globel.defaultRequestStatus) {
-          this.bannerList = res.data.object.pageEntity.pageList;
-          this.total = res.data.object.pageEntity.total;
-        }
-      })
-      this.$axios({
-        url: this.Globel.requestUrl + "/getQiNiuToken",
-        method: "GET"
-      }).then(res => {
-        this.qiNiuUploadData.token = res.data.msg
-      })
-    },
-    methods: {
-
-      //新增banner
-      addNewBanner() {
-
-        this.$axios({
-          url: this.Globel.requestUrl + "/banner/mainBannerAdd",
-          method: "post",
-          data: this.ruleForm
-        }).then(res => {
-          if (res.data.status != this.Globel.defaultRequestStatus) {
-            this.$message(res.data.msg)
-          } else {
-            this.addDialogIsShow = false;
-
-            //清空输入框
-            this.ruleForm.uploadType = "";
-            this.ruleForm.mainBannerUrl = "";
-            this.ruleForm.mainBannerName = "";
-            this.ruleForm.skipUrl = "";
-
-            //reload
+        mounted() {
             this.$axios({
-              url: this.Globel.requestUrl + "/banner/mainBannerListPageQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize,
-              method: "GET"
+                url: this.Globel.requestUrl + "/banner/mainBannerListPageQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize,
+                method: "GET"
             }).then(res => {
-              if (res.data.object.status == this.Globel.defaultRequestStatus) {
-                this.bannerList = res.data.object.pageEntity.pageList;
-                this.total = res.data.object.pageEntity.total;
-              }
+                if (res.data.success) {
+                    this.bannerList = res.data.data.pageEntity.pageList;
+                    this.total = res.data.data.pageEntity.total;
+                }
             })
-          }
-        })
-      },
+            this.$axios({
+                url: this.Globel.requestUrl + "/getQiNiuToken",
+                method: "GET"
+            }).then(res => {
+                console.log(res)
+                this.qiNiuUploadData.token = res.data.data
+            })
+        },
+        methods: {
 
-      //关闭主页banner新增弹出框
-      cancelNewBanner() {
-        this.addDialogIsShow = false;
-        this.ruleForm.addUploadType = "";
-        this.uploadBannerShowUrl = "";
-      },
+            //新增banner
+            addNewBanner() {
 
-      /**
-       * 关闭编辑主页广告弹出框
-       * */
-      cancelCompileBanner(){
-        this.compileDialogIsShow = false
-      },
+                this.$axios({
+                    url: this.Globel.requestUrl + "/banner/mainBannerAdd",
+                    method: "post",
+                    data: this.ruleForm
+                }).then(res => {
+                    if (res.data.success) {
+                        this.addDialogIsShow = false;
 
-      //点击搜索
-      doSearch() {
-        this.queryMainBannerList()
-      },
+                        //清空输入框
+                        this.ruleForm.uploadType = "";
+                        this.ruleForm.mainBannerUrl = "";
+                        this.ruleForm.mainBannerName = "";
+                        this.ruleForm.skipUrl = "";
 
-      pageChange(pageNum) {
-        this.pageNum = pageNum;
-        this.queryMainBannerList()
-      },
-      handleRemove(file, fileList) {
-      },
+                        //reload
+                        this.$axios({
+                            url: this.Globel.requestUrl + "/banner/mainBannerListPageQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize,
+                            method: "GET"
+                        }).then(res => {
+                            if (res.data.success) {
+                                this.bannerList = res.data.data.pageEntity.pageList;
+                                this.total = res.data.data.pageEntity.total;
+                            }
+                        })
+                    } else {
+                        this.$message(res.data.msg)
+                    }
+                })
+            },
 
-      //显示上传图片
-      handlePictureCardPreview(file) {
-        this.uploadBannerIsShow = true
-        this.uploadBannerShowUrl = file.url;
-      },
+            //关闭主页banner新增弹出框
+            cancelNewBanner() {
+                this.addDialogIsShow = false;
+                this.ruleForm.addUploadType = "";
+                this.uploadBannerShowUrl = "";
+            },
 
-      //banner上传成功时
-      handleUploadSuccess(file) {
-        this.ruleForm.qiNiuUploadCallBack = file.hash
-      },
+            /**
+             * 关闭编辑主页广告弹出框
+             * */
+            cancelCompileBanner() {
+                this.compileDialogIsShow = false
+            },
 
-      //超过一张选择的banner时
-      handleUploadFileOutOfBounds() {
-        this.$message({
-          showClose: true,
-          message: '一次只能选择一张进行上传'
-        });
-      },
+            //点击搜索
+            doSearch() {
+                this.queryMainBannerList()
+            },
 
-      //上传的banner状态转换
-      statusChange(status) {
-        this.ruleForm.mainBannerStatus = status
-      },
+            pageChange(pageNum) {
+                this.pageNum = pageNum;
+                this.queryMainBannerList()
+            },
+            handleRemove(file, fileList) {
+            },
 
-      //对话框关闭
-      dialogClose() {
-        this.$refs["ruleForm"].resetFields();
-      },
+            //显示上传图片
+            handlePictureCardPreview(file) {
+                this.uploadBannerIsShow = true
+                this.uploadBannerShowUrl = file.url;
+            },
 
-      /**
-       * @param mainBannerId 主页id
-       * @param index 下标
-       * */
-      delMainBanner(mainBannerId, index) {
-        this.$axios({
-          url: this.Globel.requestUrl + "/banner/mainBannerDel",
-          method: "post",
-          data: {
-            mainBannerId: mainBannerId
-          }
-        }).then(res => {
-          if (res.data.status == this.Globel.defaultRequestStatus) {
-            this.queryMainBannerList()
-          } else {
-            this.$message(res.data.msg)
-          }
-        })
-      },
+            //banner上传成功时
+            handleUploadSuccess(file) {
+                this.ruleForm.qiNiuUploadCallBack = file.hash
+            },
 
-      /**
-       * 查询主页广告列表
-       * */
-      queryMainBannerList() {
-        var startTime = "";
-        var endTime = "";
-        if (this.searchTime != null) {
-          startTime = this.searchTime[0];
-          endTime = this.searchTime[1];
+            //超过一张选择的banner时
+            handleUploadFileOutOfBounds() {
+                this.$message({
+                    showClose: true,
+                    message: '一次只能选择一张进行上传'
+                });
+            },
+
+            //上传的banner状态转换
+            statusChange(status) {
+                this.ruleForm.mainBannerStatus = status
+            },
+
+            //对话框关闭
+            dialogClose() {
+                this.$refs["ruleForm"].resetFields();
+            },
+
+            /**
+             * @param mainBannerId 主页id
+             * @param index 下标
+             * */
+            delMainBanner(mainBannerId, index) {
+                this.$axios({
+                    url: this.Globel.requestUrl + "/banner/mainBannerDel",
+                    method: "post",
+                    data: {
+                        mainBannerId: mainBannerId
+                    }
+                }).then(res => {
+                    if (res.data.success) {
+                        this.queryMainBannerList()
+                    } else {
+                        this.$message(res.data.msg)
+                    }
+                })
+            },
+
+            /**
+             * 查询主页广告列表
+             * */
+            queryMainBannerList() {
+                var startTime = "";
+                var endTime = "";
+                if (this.searchTime != null) {
+                    startTime = this.searchTime[0];
+                    endTime = this.searchTime[1];
+                }
+                this.$axios({
+                    url: this.Globel.requestUrl + "/banner/mainBannerListPageQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize + "&startTime=" + startTime + "&endTime=" + endTime + "&mainBannerStatus=" + this.chooseBannerStatus,
+                    method: "GET"
+                }).then(res => {
+                    if (res.data.data.status == this.Globel.defaultRequestStatus) {
+                        this.bannerList = res.data.data.pageEntity.pageList
+                        this.total = res.data.data.pageEntity.total;
+                    }
+                })
+            },
+
+            /**
+             * 打开编辑主页banner弹出框
+             * */
+            openMainBannerDialog(data, index) {
+                console.log(data)
+                this.compileDialogIsShow = true;
+                this.compileMainBannerData.mainBannerName = data.mainBannerName
+                this.compileMainBannerData.mainBannerUrl = data.mainBannerUrl
+                this.compileMainBannerData.skipUrl = data.skipUrl
+                this.compileMainBannerData.mainBannerStatus = data.mainBannerStatus
+                this.compileMainBannerData.uploadType = data.uploadType == '本地选择' ? 'LOCAL' : 'OUTSIDE'
+                console.log(data)
+            },
+
+            /**
+             * 确认编辑主页广告
+             * */
+            compileMainBanner() {
+
+            }
+
         }
-        this.$axios({
-          url: this.Globel.requestUrl + "/banner/mainBannerListPageQuery?pageNum=" + this.pageNum + "&pageSize=" + this.pageSize + "&startTime=" + startTime + "&endTime=" + endTime + "&mainBannerStatus=" + this.chooseBannerStatus,
-          method: "GET"
-        }).then(res => {
-          if (res.data.object.status == this.Globel.defaultRequestStatus) {
-            this.bannerList = res.data.object.pageEntity.pageList
-            this.total = res.data.object.pageEntity.total;
-          }
-        })
-      },
-
-      /**
-       * 打开编辑主页banner弹出框
-       * */
-      openMainBannerDialog(data, index) {
-        console.log(data)
-        this.compileDialogIsShow = true;
-        this.compileMainBannerData.mainBannerName = data.mainBannerName
-        this.compileMainBannerData.mainBannerUrl = data.mainBannerUrl
-        this.compileMainBannerData.skipUrl = data.skipUrl
-        this.compileMainBannerData.mainBannerStatus = data.mainBannerStatus
-        this.compileMainBannerData.uploadType = data.uploadType == '本地选择' ? 'LOCAL' : 'OUTSIDE'
-        console.log(data)
-      },
-
-      /**
-       * 确认编辑主页广告
-       * */
-      compileMainBanner(){
-
-      }
-
     }
-  }
 </script>
 
 <style scoped>

@@ -8,14 +8,13 @@
         <el-col :span="7">
           <el-input class="header-search" prefix-icon="el-icon-search" placeholder="搜索您想看的影片"></el-input>
         </el-col>
-        <el-col :span="2">
+        <el-col :span="2" >
           <el-dropdown type="primary" @command="handleCommand" class="header-user-header">
-            <el-avatar shape="circle" :size="60" :src="this.userForm.userAvatar" @error="errorHandler"></el-avatar>
-
+            <el-avatar shape="circle" :size="60" :src="this.userForm.userAvatar" @error="errorHandler" ></el-avatar>
             <el-dropdown-menu style="text-align: left">
-              <!--<el-dropdown-item>登陆</el-dropdown-item>-->
               <el-dropdown-item>{{this.userForm.userName}}</el-dropdown-item>
               <el-dropdown-item divided command="logOut">注销</el-dropdown-item>
+              <el-dropdown-item>个人信息</el-dropdown-item>
               <el-dropdown-item v-if="isAdmin" command="toBackStage">后台管理</el-dropdown-item>
               <el-dropdown-item>我的购物车</el-dropdown-item>
               <el-dropdown-item>历史订单信息</el-dropdown-item>
@@ -28,7 +27,7 @@
     <div class="main">
       <div class="video-show">
         <div class="show-title">
-          <div class="show-title-icon"></div>
+          <i class="iconfont icon-huo show-title-icon"></i>
           <p class="show-title-font">热播影片</p>
         </div>
         <div class="swiper-container swiper-show  ">
@@ -43,7 +42,7 @@
       </div>
       <div class="videos-free">
         <div class="show-title">
-          <div class="show-title-icon"></div>
+          <i class="iconfont icon-mianfei show-title-icon"></i>
           <div class="show-title-font">免费在线影片</div>
         </div>
         <div class="video-list">
@@ -59,7 +58,7 @@
       </div>
       <div class="videos-free">
         <div class="show-title">
-          <div class="show-title-icon"></div>
+          <i class="iconfont icon-50 show-title-icon"></i>
           <div class="show-title-font">付费影片</div>
         </div>
         <div class="video-list">
@@ -79,109 +78,114 @@
 
 <script>
 
-  import Swiper from 'swiper'
+    import Swiper from 'swiper'
 
-  export default {
-    name: "ShopMain",
-    data() {
-      return {
-        userForm: {
-          userAvatar: "",
-          userName: "",
-          userRoleId:""
+    export default {
+        name: "ShopMain",
+        data() {
+            return {
+                userForm: {
+                    userAvatar: "",
+                    userName: "",
+                    userRoleId: ""
+                },
+                mainBannerList: [],
+                videos: [
+                    "12a3", "12a3"
+                ],
+                isAdmin: false, //是否为管理员
+                fits: "fit",
+                that: this
+            }
         },
-        mainBannerList: [],
-        videos: [
-          "12a3", "12a3"
-        ],
-        isAdmin: false, //是否为管理员
-        fits: "fit",
-        that: this
-      }
-    },
-    mounted() {
+        mounted() {
 
-      //获取用户信息
-      this.$axios({
-        url: this.Globel.requestUrl + "/user/userInfoQuery?userId=" + localStorage.getItem("userId"),
-        method: "get",
-      }).then(res => {
-        console.log(res)
-        this.userForm.userAvatar = res.data.object.userAvatar
-        this.userForm.userName = res.data.object.userName
-        this.userForm.userRoleId = res.data.object.userRoleId
+            //获取用户信息
+            this.$axios({
+                url: this.Globel.requestUrl + "/user/userInfoQuery?userId=" + localStorage.getItem("userId"),
+                method: "get",
+            }).then(res => {
+                console.log(res)
+                this.userForm.userAvatar = res.data.data.userAvatar
+                this.userForm.userName = res.data.data.userName
+                this.userForm.userRoleId = res.data.data.userRoleId
 
-        localStorage.setItem("userRoleId",res.data.object.userRoleId)
-        if (res.data.object.userRole == "超级管理员") {
-          this.isAdmin = true
-        }
-      })
+                localStorage.setItem("userRoleId", res.data.userRoleId)
+                if (res.data.data.userRole == "ADMIN") {
+                    this.isAdmin = true
+                }
+            })
 
-      //获取主页bannerList
-      this.$axios({
-        url: this.Globel.requestUrl + "/banner/mainBannerListQuery",
-        method: "get"
-      }).then(res => {
-        if (res.data.status == this.Globel.defaultRequestStatus) {
-          this.mainBannerList = res.data.object.mainBannerInfos
-        }
-      })
-      const that = this;
-      setTimeout(function () {
-        var swiper = new Swiper('.swiper-container', {
-          autoplay: {
-            delay: 3500,
-            stopOnLastSlide: false,
-            disableOnInteraction: false,
-          },
-          effect: 'fade',
-          loop: true,
-          grabCursor: true,
-          pagination: {
-            el: '.swiper-pagination',
-          },
+            //获取主页bannerList
+            this.$axios({
+                url: this.Globel.requestUrl + "/banner/mainBannerListQuery",
+                method: "get"
+            }).then(res => {
+                if (res.data.success) {
+                    this.mainBannerList = res.data.data.mainBannerInfos
+                }
+            })
+            const that = this;
+            setTimeout(function () {
+                var swiper = new Swiper('.swiper-container', {
+                    autoplay: {
+                        delay: 3500,
+                        stopOnLastSlide: false,
+                        disableOnInteraction: false,
+                    },
+                    effect: 'fade',
+                    loop: true,
+                    grabCursor: true,
+                    pagination: {
+                        el: '.swiper-pagination',
+                    },
 
-        })
-      }, 1000)
+                })
+            }, 1000)
 
-    },
-    methods: {
+        },
+        methods: {
 
-      /**
-       * dropdown点击绑定事件
-       * */
-      handleCommand(c) {
-        if (c == "toBackStage") {
-          this.$router.push(
-            {
-              path:"/backStage",
+            /**
+             * dropdown点击绑定事件
+             * */
+            handleCommand(c) {
+                if (c == "toBackStage") {
+                    this.$router.push(
+                        {
+                            path: "/backStage",
+                        }
+                    )
+                }
+                if (c == "logOut") {
+                    this.$axios({
+                        url: this.Globel.requestUrl + "/user/userLogOut?userId=" + localStorage.getItem("userId"),
+                        method: "GET"
+                    }).then(res => {
+                        if (res.data.success) {
+                            localStorage.clear()
+                            this.$router.push("/")
+                        }
+                    })
+                }
+            },
+
+            changeAvatar(){
+                console.log("呵呵")
+            },
+
+            errorHandler() {
+                console.log(1)
+            },
+
+            //页面跳转
+            skip(data) {
+                if (data.skipUrl != "") {
+                    window.location.href = "http://" + data.skipUrl
+                }
             }
-          )
         }
-        if (c == "logOut") {
-          this.$axios({
-            url: this.Globel.requestUrl + "/user/userLogOut?userId=" + localStorage.getItem("userId"),
-            method: "GET"
-          }).then(res => {
-            if (res.data.object.status == "SUCCESS") {
-              localStorage.clear()
-              this.$router.push("/")
-            }
-          })
-        }
-      },
-      errorHandler() {
-        console.log(1)
-      },
-
-      //页面跳转
-      skip(data){
-        if(data.skipUrl != ""){
-          window.location.href = "http://"+data.skipUrl
-        }
-      }
     }
-  }
 </script>
 
 <style scoped>
@@ -251,20 +255,14 @@
   .show-title-icon {
     width: 30px;
     height: 30px;
-    border: 1px solid green;
     display: inline-block;
-    /*position: relative;*/
-    /*top: 12px;*/
     background-size: cover;
     float: left;
-
+    font-size: 30px;
   }
 
   .show-title {
-    /*width: 130px;*/
-    /*height: 0px;*/
     position: relative;
-    /*padding-bottom: 1px;*/
     overflow: hidden;
   }
 

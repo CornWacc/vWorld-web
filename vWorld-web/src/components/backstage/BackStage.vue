@@ -34,40 +34,28 @@
                   </el-menu-item>
                 </el-menu-item-group>
               </el-submenu>
-            </el-menu>
-            <el-menu
-              default-active="2"
-              class="el-menu-vertical-demo"
-              @open="handleOpen"
-              @close="handleClose">
-              <el-submenu index="1">
+              <el-submenu index="2">
                 <template slot="title">
                   <i class="iconfont icon-shuffling-banner"></i>
                   <span>Banner</span>
                 </template>
                 <el-menu-item-group>
-                  <el-menu-item index="1-1">
+                  <el-menu-item index="2-1">
                     <router-link to="/backStage/productMainBannerList" tag="div">商品主页广告</router-link>
                   </el-menu-item>
-                  <el-menu-item index="1-2">
+                  <el-menu-item index="2-2">
                     <router-link to="/backStage/loginBannerList" tag="div">登陆主页广告</router-link>
                   </el-menu-item>
                 </el-menu-item-group>
               </el-submenu>
-            </el-menu>
-            <el-menu
-              default-active="2"
-              class="el-menu-vertical-demo"
-              @open="handleOpen"
-              @close="handleClose">
-              <el-submenu index="1">
+              <el-submenu index="3">
                 <template slot="title">
                   <i class="el-icon-picture-outline"></i>
                   <span>Video</span>
                 </template>
                 <el-menu-item-group>
-                  <el-menu-item index="1-1">电影展示列表</el-menu-item>
-                  <el-menu-item index="1-2">电影票售出详情</el-menu-item>
+                  <el-menu-item index="3-1">电影展示列表</el-menu-item>
+                  <el-menu-item index="3-2">电影票售出详情</el-menu-item>
                 </el-menu-item-group>
               </el-submenu>
             </el-menu>
@@ -108,7 +96,7 @@
        this.$axios({
          url:this.Globel.requestUrl+"/user/userInfoQuery?userId="+localStorage.getItem("userId")
        }).then(res => {
-         this.userName = res.data.object.userName
+         this.userName = res.data.data.userName
        })
     },
     methods: {
