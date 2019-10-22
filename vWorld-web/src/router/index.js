@@ -4,9 +4,10 @@ import LoginAndReg from '@/components/user/LoginAndReg'
 import BackStage from "@/components/backstage/BackStage"
 import UserList from "@/components/backstage/user/UserList"
 import Main from "@/components/main/Main"
-import RoleList from "@/components/backstage/role/RoleList"
+import RoleList from "@/components/backstage/user/RoleList"
 import ProductMainBannerList from '@/components/backstage/banner/ProductMainBannerList'
 import LoginBannerList from '@/components/backstage/banner/LoginBannerList'
+import VideoList from "../components/backstage/video/VideoList";
 Vue.use(Router)
 
 
@@ -39,6 +40,10 @@ export default new Router({
           path:"loginBannerList",
           name:"LoginBannerList",
           component:LoginBannerList
+        },{
+          path:"videoList",
+          name:"VideoList",
+          component:VideoList
         }
       ]
     },

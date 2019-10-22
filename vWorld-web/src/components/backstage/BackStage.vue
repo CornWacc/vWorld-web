@@ -54,8 +54,9 @@
                   <span>Video</span>
                 </template>
                 <el-menu-item-group>
-                  <el-menu-item index="3-1">电影展示列表</el-menu-item>
-                  <el-menu-item index="3-2">电影票售出详情</el-menu-item>
+                  <el-menu-item index="3-1">
+                    <router-link to="/backStage/videoList" tag="div">V视频列表</router-link>
+                  </el-menu-item>
                 </el-menu-item-group>
               </el-submenu>
             </el-menu>

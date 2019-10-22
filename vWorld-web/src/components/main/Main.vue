@@ -8,9 +8,9 @@
         <el-col :span="7">
           <el-input class="header-search" prefix-icon="el-icon-search" placeholder="搜索您想看的影片"></el-input>
         </el-col>
-        <el-col :span="2" >
+        <el-col :span="2">
           <el-dropdown type="primary" @command="handleCommand" class="header-user-header">
-            <el-avatar shape="circle" :size="60" :src="this.userForm.userAvatar" @error="errorHandler" ></el-avatar>
+            <el-avatar shape="circle" :size="60" :src="this.userForm.userAvatar" @error="errorHandler"></el-avatar>
             <el-dropdown-menu style="text-align: left">
               <el-dropdown-item>{{this.userForm.userName}}</el-dropdown-item>
               <el-dropdown-item divided command="logOut">注销</el-dropdown-item>
@@ -26,10 +26,6 @@
     </el-header>
     <div class="main">
       <div class="video-show">
-        <div class="show-title">
-          <i class="iconfont icon-huo show-title-icon"></i>
-          <p class="show-title-font">热播影片</p>
-        </div>
         <div class="swiper-container swiper-show  ">
           <div class="swiper-wrapper">
             <div class="swiper-slide" v-for="item in mainBannerList" :key="item.mainBannerId">
@@ -42,10 +38,10 @@
       </div>
       <div class="videos-free">
         <div class="show-title">
-          <i class="iconfont icon-mianfei show-title-icon"></i>
-          <div class="show-title-font">免费在线影片</div>
+          <i class="iconfont icon-huo show-title-icon"></i>
+          <div class="show-title-font">V视频</div>
         </div>
-        <div class="video-list">
+        <div class="free-video-list">
           <el-row :gutter="24">
             <el-col :span="6" v-for="(item, index) in videos" :key="index">
               <div class="video"></div>
@@ -54,25 +50,12 @@
             </el-col>
           </el-row>
         </div>
-
       </div>
-      <div class="videos-free">
-        <div class="show-title">
-          <i class="iconfont icon-50 show-title-icon"></i>
-          <div class="show-title-font">付费影片</div>
-        </div>
-        <div class="video-list">
-          <el-row :gutter="24">
-            <el-col :span="6" v-for="(item, index) in videos" :key="index">
-              <div class="video"></div>
-              <p class="video-name" style="margin-top: 8px">{{item}}</p>
-              <p class="video-create_time">上映日期：</p>
-            </el-col>
-          </el-row>
-        </div>
-
-      </div>
+      <el-footer class="footer">
+        <i>渝ICP备19007492号-1</i>
+      </el-footer>
     </div>
+
   </div>
 </template>
 
@@ -89,10 +72,7 @@
                     userName: "",
                     userRoleId: ""
                 },
-                mainBannerList: [],
-                videos: [
-                    "12a3", "12a3"
-                ],
+                videos: [],
                 isAdmin: false, //是否为管理员
                 fits: "fit",
                 that: this
@@ -170,7 +150,7 @@
                 }
             },
 
-            changeAvatar(){
+            changeAvatar() {
                 console.log("呵呵")
             },
 
@@ -271,21 +251,19 @@
     margin: 0px;
     left: 40px;
     bottom: 1px;
+    font-size: 18px;
+    font-family: Futura;
   }
 
   .videos-free {
-    /*width: 94%;*/
     margin-left: auto;
     margin-right: auto;
-    height: 400px;
-    /*border: 1px solid yellowgreen;*/
     margin-top: 56px;
   }
 
   .video-list-title {
     width: 150px;
     height: 40px;
-    /*border: 1px solid orange;*/
     margin-bottom: 20px;
   }
 
@@ -299,9 +277,8 @@
     background-size: cover;
   }
 
-  .video-list {
+  .free-video-list,.pay-video-list {
     width: 100%;
-    height: 80%;
     display: flex;
   }
 
@@ -315,9 +292,6 @@
     margin-right: auto;
   }
 
-  .el-col-2 {
-  }
-
   .el-row {
     width: 100%
   }
@@ -329,5 +303,16 @@
   .header-search {
     top: 38px;
     width: 200px;
+  }
+
+  .footer{
+    margin-top: 30px;
+    margin-bottom: 10px;
+    font-family: 微软雅黑;
+    padding-top: 10px;
+    line-height: 12px;
+    font-size: 12px;
+    height: 30px !important;
+    border-top: 1px solid black;
   }
 </style>
