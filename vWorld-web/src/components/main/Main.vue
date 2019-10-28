@@ -14,7 +14,7 @@
             <el-dropdown-menu style="text-align: left">
               <el-dropdown-item>{{this.userForm.userName}}</el-dropdown-item>
               <el-dropdown-item divided command="logOut">注销</el-dropdown-item>
-              <el-dropdown-item>个人信息</el-dropdown-item>
+              <el-dropdown-item command="toPersonalData">个人信息</el-dropdown-item>
               <el-dropdown-item v-if="isAdmin" command="toBackStage">后台管理</el-dropdown-item>
               <el-dropdown-item>我的购物车</el-dropdown-item>
               <el-dropdown-item>历史订单信息</el-dropdown-item>
@@ -75,7 +75,8 @@
                 videos: [],
                 isAdmin: false, //是否为管理员
                 fits: "fit",
-                that: this
+                that: this,
+                mainBannerList:[]
             }
         },
         mounted() {
@@ -103,25 +104,24 @@
             }).then(res => {
                 if (res.data.success) {
                     this.mainBannerList = res.data.data.mainBannerInfos
+                    setTimeout(function () {
+                        var swiper = new Swiper('.swiper-container', {
+                            autoplay: {
+                                delay: 3500,
+                                stopOnLastSlide: false,
+                                disableOnInteraction: false,
+                            },
+                            effect: 'fade',
+                            loop: true,
+                            grabCursor: true,
+                            pagination: {
+                                el: '.swiper-pagination',
+                            },
+
+                        })
+                    }, 500)
                 }
             })
-            const that = this;
-            setTimeout(function () {
-                var swiper = new Swiper('.swiper-container', {
-                    autoplay: {
-                        delay: 3500,
-                        stopOnLastSlide: false,
-                        disableOnInteraction: false,
-                    },
-                    effect: 'fade',
-                    loop: true,
-                    grabCursor: true,
-                    pagination: {
-                        el: '.swiper-pagination',
-                    },
-
-                })
-            }, 1000)
 
         },
         methods: {
@@ -146,6 +146,11 @@
                             localStorage.clear()
                             this.$router.push("/")
                         }
+                    })
+                }
+                if(c == "toPersonalData"){
+                    this.$router.push({
+                        path: "/personal",
                     })
                 }
             },
@@ -277,7 +282,7 @@
     background-size: cover;
   }
 
-  .free-video-list,.pay-video-list {
+  .free-video-list, .pay-video-list {
     width: 100%;
     display: flex;
   }
@@ -305,7 +310,7 @@
     width: 200px;
   }
 
-  .footer{
+  .footer {
     margin-top: 30px;
     margin-bottom: 10px;
     font-family: 微软雅黑;

@@ -8,6 +8,7 @@ import RoleList from "@/components/backstage/user/RoleList"
 import ProductMainBannerList from '@/components/backstage/banner/ProductMainBannerList'
 import LoginBannerList from '@/components/backstage/banner/LoginBannerList'
 import VideoList from "../components/backstage/video/VideoList";
+import PersonalData from "../components/user/PersonalData";
 Vue.use(Router)
 
 
@@ -53,5 +54,10 @@ export default new Router({
       name:"Main",
       component:Main
     },
+    {
+      path:"/personal",
+      name:"personal",
+      component:PersonalData
+    }
   ]
 })
