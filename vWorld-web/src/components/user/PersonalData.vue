@@ -23,38 +23,76 @@
     </el-header>
     <el-main class="main">
       <el-row>
-        <el-col :span="12" :offset="1" class="main_left_model">
+        <el-col :span="12" :offset="3" class="main_left_model">
           <div class="main_left_model_user">
             <el-row style="margin-top: 10px;margin-left: 20px">
               <el-col :span="4">
                 <el-avatar :size="80" class="main_left_model_user_header"></el-avatar>
               </el-col>
               <el-col :lg="{span:12,offset:1}" :xl="{span:12,offset:0}" class="main_left_model_user_base">
-                <el-row class="user_name">CornWacc</el-row>
+                <el-row><p style="display: inline;" class="user_name">CornWacc</p>
+                  <li style="margin-left: 12px;font-size: 16px">Boy</li>
+                  <p class="user_level" style="display: inline;">Lv24</p></el-row>
                 <el-row class="user_info">关注|粉丝|视频数|点赞|</el-row>
               </el-col>
             </el-row>
             <el-row>
-              <el-menu  class="main_left_model_navmenu" :default-active="activeIndex" mode="horizontal" @select="handleSelect">
-                <el-menu-item index="1">我的视频</el-menu-item>
-                <el-menu-item index="2">我的关注</el-menu-item>
-                <el-menu-item index="3">最新评论</el-menu-item>
-                <el-menu-item index="4">我的V社</el-menu-item>
+              <el-menu class="main_left_model_navmenu" :default-active="defaultActive" mode="horizontal"
+                       @select="handleSelect">
+                <el-menu-item index="1">
+                  <template slot="title">
+                    <i class="el-icon-location" style="margin-right: 0px;font-size: 20px"></i>
+                    <span>我的视频</span>
+                  </template>
+                </el-menu-item>
+                <el-menu-item index="2">
+                  <template slot="title">
+                    <i class="el-icon-location" style="margin-right: 0px;font-size: 20px"></i>
+                    <span>我的关注</span>
+                  </template>
+                </el-menu-item>
+                <el-menu-item index="3">
+                  <template slot="title">
+                    <i class="el-icon-location" style="margin-right: 0px;font-size: 20px"></i>
+                    <span>最新评论</span>
+                  </template>
+                </el-menu-item>
+                <el-menu-item index="4">
+                  <template slot="title">
+                    <i class="el-icon-location" style="margin-right: 0px;font-size: 20px"></i>
+                    <span>我的V社</span>
+                  </template>
+                </el-menu-item>
               </el-menu>
             </el-row>
           </div>
+          <div class="main_left_model_show">
+
+          </div>
         </el-col>
         <el-col :span="6" class="main_right_model">
+          <div class="main_right_model_search">
+            <el-input
+              placeholder="请输入希望查询的用户"
+              prefix-icon="el-icon-search"
+              v-model="searchUserInput">
+            </el-input>
+          </div>
         </el-col>
       </el-row>
     </el-main>
     <el-footer></el-footer>
+    <chat-box></chat-box>
   </el-container>
 </template>
 
 <script>
+    import ChatBox from "../ChatBox";
     export default {
         name: "PersonalData",
+        components: {
+            ChatBox
+        },
         data() {
             return {
                 userForm: {
@@ -62,7 +100,13 @@
                     userName: "",
                     userRoleId: "",
                     isAdmin: false
-                }
+                },
+                searchUserInput: "",
+                drawerIsShow: true,
+                dialogIsShow: false,
+                defaultActive: "1",
+                direction: 'rtl',
+
             }
         },
         methods: {
@@ -96,8 +140,12 @@
             },
 
             errorHandler() {
-                console.log(1)
             },
+
+            handleSelect(key, keyPath) {
+
+            }
+
         }
     }
 </script>
@@ -126,6 +174,10 @@
     margin-bottom: 20px;
   }
 
+  .main >>> li {
+    display: inline;
+  }
+
   .header-img {
     width: 60px;
     height: 60px;
@@ -140,7 +192,7 @@
     width: 100px;
     display: block;
     position: relative;
-    left: 50px;
+    left: 60px;
     top: 12px;
     font-size: 26px;
     color: black;
@@ -157,31 +209,62 @@
 
   .main_left_model_user {
     height: 140px;
-    border-bottom: 1px solid rgba(0,0,0,0.1);
-    box-shadow: 3px 3px 3px rgba(0,0,0,0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.1);
   }
 
   .main_left_model_user_header {
-    background-color: rgba(0,0,0,0.1);
+    background-color: rgba(0, 0, 0, 0.1);
   }
 
   .main_left_model_user_base {
     font-size: 14px;
-    text-align:left;
+    text-align: left;
     margin-top: 6px;
   }
 
-  .main_left_model_user_base >>> .user_name{
+  .main_left_model_user_base /deep/ .user_name {
     font-weight: bolder;
     font-size: 22px;
   }
 
-  .main_left_model_user_base >>> .user_info{
+  .main_left_model_user_base >>> .user_info {
     margin-top: 4px;
   }
 
-  .main_left_model_navmenu{
+  .user_level {
+    margin-left: 12px;
+    font-size: 15px;
+  }
+
+  .main_left_model_navmenu {
     height: 50px;
     border-bottom: none;
+    margin-left: 24px;
+    font-weight: bolder;
   }
+
+  .el-menu--horizontal >>> .el-menu-item.is-active {
+    border-bottom: darkslategray !important;
+  }
+
+  .main_left_model_show {
+    margin-top: 18px;
+    width: 100%;
+    min-height: 500px;
+    /*border: 1px solid rgba(0,0,0,0.1);*/
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0.03);
+  }
+
+  .main_right_model_search {
+    width: 100%;
+    margin-left: 30px;
+  }
+
+  .main_right_model_search >>> .el-input__inner {
+    border-radius: 16px;
+  }
+
+
 </style>
