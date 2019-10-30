@@ -223,7 +223,6 @@
                                 localStorage.setItem("userId", res.data.data.userId)
                                 //登陆成功跳转主页
                                 this.$router.push("/main")
-
                             } else {
                                 this.$alert(res.data.msg, "错误", {
                                     confirmButtonText: '确定',
@@ -271,6 +270,8 @@
                     window.location.href = "http://" + data.skipUrl
                 }
             }
+        },
+        sockets:{
         }
     }
 </script>
@@ -283,6 +284,7 @@
     background: url("../../img/login/bkg.jpg");
     background-size: cover;
     position: relative;
+    text-align: center;
   }
 
   .model {
@@ -344,6 +346,8 @@
 
   .title {
     text-align: right;
+    height: 40px;
+    line-height: 40px;
   }
 
   .login-title {

@@ -3,7 +3,7 @@
     <el-header class="header">
       <el-row style="display: block;margin-left: auto;margin-right: auto;width: 80%">
         <el-col :span="14">
-          <div class="header-img"><p class="header-title">微世界</p></div>
+          <div class="header-img" @click="toMain"><p class="header-title">世界</p></div>
         </el-col>
         <el-col :span="10">
           <el-dropdown type="primary" @command="handleCommand" class="header-user-header">
@@ -23,13 +23,13 @@
     </el-header>
     <el-main class="main">
       <el-row>
-        <el-col :span="12" :offset="3" class="main_left_model">
+        <el-col :lg="{span:14,offset:1}" :xl="{span:12,offset:3}" class="main_left_model">
           <div class="main_left_model_user">
             <el-row style="margin-top: 10px;margin-left: 20px">
-              <el-col :span="4">
-                <el-avatar :size="80" class="main_left_model_user_header"></el-avatar>
+              <el-col :span="2">
+                <el-avatar :size="80" :src="this.userForm.userAvatar" class="main_left_model_user_header"></el-avatar>
               </el-col>
-              <el-col :lg="{span:12,offset:1}" :xl="{span:12,offset:0}" class="main_left_model_user_base">
+              <el-col :lg="{span:12,offset:1}" :xl="{span:10,offset:0}" class="main_left_model_user_base">
                 <el-row><p style="display: inline;" class="user_name">CornWacc</p>
                   <li style="margin-left: 12px;font-size: 16px">Boy</li>
                   <p class="user_level" style="display: inline;">Lv24</p></el-row>
@@ -70,7 +70,7 @@
 
           </div>
         </el-col>
-        <el-col :span="6" class="main_right_model">
+        <el-col :xl="{span:6}" :lg="{span:7}" class="main_right_model">
           <div class="main_right_model_search">
             <el-input
               placeholder="请输入希望查询的用户"
@@ -81,7 +81,7 @@
         </el-col>
       </el-row>
     </el-main>
-    <el-footer></el-footer>
+<!--    <el-footer></el-footer>-->
     <chat-box></chat-box>
   </el-container>
 </template>
@@ -99,7 +99,8 @@
                     userAvatar: "",
                     userName: "",
                     userRoleId: "",
-                    isAdmin: false
+                    isAdmin: false,
+                    userRole:""
                 },
                 searchUserInput: "",
                 drawerIsShow: true,
@@ -108,6 +109,19 @@
                 direction: 'rtl',
 
             }
+        },
+        mounted(){
+            console.log(this.$route.params)
+            this.$axios({
+                url:this.Globel.requestUrl+"/user/userInfoQuery?userId="+this.$route.query.userId
+            }).then(res =>{
+                if(res.data.success){
+                    this.userForm = res.data.data
+                    this.userForm.isAdmin = res.data.data.userRole == "ADMIN" ? true : false
+                    console.log(this.userForm)
+                }
+            })
+
         },
         methods: {
             /**
@@ -144,7 +158,15 @@
 
             handleSelect(key, keyPath) {
 
+            },
+
+            /**
+             * 回到主页
+             * */
+            toMain() {
+                this.$router.push("/main")
             }
+
 
         }
     }
@@ -170,7 +192,6 @@
     margin-left: auto;
     margin-right: auto;
     width: 70%;
-    height: 90px !important;
     margin-bottom: 20px;
   }
 
@@ -185,7 +206,8 @@
     background-size: cover;
     position: relative;
     left: 60px;
-    /*top: 22px;*/
+    top: 25px;
+    cursor: pointer;
   }
 
   .header-title {
@@ -204,7 +226,7 @@
   }
 
   .main_left_model {
-
+    height: 100%;
   }
 
   .main_left_model_user {
@@ -251,7 +273,7 @@
   .main_left_model_show {
     margin-top: 18px;
     width: 100%;
-    min-height: 500px;
+    /*min-height: 600px;*/
     /*border: 1px solid rgba(0,0,0,0.1);*/
     box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.1);
     background-color: rgba(0, 0, 0, 0.03);

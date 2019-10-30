@@ -1,7 +1,7 @@
 <template>
   <div>
     <div @click="showDraw" class="show_friend_button">
-      <li class="iconfont icon-huo" style="list-style: none;font-size: 24px;margin-top: 10px;margin-bottom: 10px"></li>
+      <li class="iconfont icon-huo" style="list-style: none;font-size: 24px;margin-top: 10px;margin-bottom: 4px"></li>
       V友
     </div>
     <el-drawer
@@ -9,8 +9,9 @@
       :visible.sync="drawerIsShow"
       :direction="direction"
       :before-close="drawerHandleClose"
-      size="200px"
+      size="240px"
       :modal="false"
+      custom-class="vfriend_drawer"
       class="vfriend_drawer">
       <el-col>
         <div style="text-align: center">
@@ -19,7 +20,7 @@
           </el-row>
           <el-row style="font-size: 13px;margin-bottom: 10px;font-style: italic">Lv24</el-row>
         </div>
-        <el-row v-for="item in vfriendList" class="vfriend_list_item">
+        <el-row v-for="item in vfriendList" :key="item.userId" class="vfriend_list_item">
           <div @click="showChatBox(item)">
             <li class="vfriend_list_name">
               {{item.userName}}
@@ -37,27 +38,46 @@
 
     <el-dialog
       :modal="false"
-      :title="chatBox.tital"
+      :title="chatBox.title"
       :visible.sync="dialogIsShow"
       width="30%"
       :before-close="dialogHandleClose"
       class="chatbox">
-      <div class="chatbox_text_show_model">
-        <div class="chatbox_msg" v-for="item in chatBox.msgList">
-          <div class="chatbox_msg_item" :class="item.direction == 'left' ? 'chatbox_msg_left' : 'chatbox_msg_right'">
-            <el-avatar>
-            </el-avatar>
-            <div class="chatbodex_msg_content" style="display: inline-block">123</div>
+      <Scroll height="500">
+        <div class="chatbox_msg" v-for="item in chatBox.msgList" :key="item.mcgId">
+          <div class="chatbox_msg_item left"
+               :class="item.direction == 'left' ? 'chatbox_msg_left' : 'chatbox_msg_right'">
+            <el-row>
+              <el-col :span="3">
+                <el-avatar :src="item.userAvatar">
+                </el-avatar>
+              </el-col>
+              <el-col :span="10">
+                <el-row>
+                  <p style="font-size:10px">{{item.createTime}}</p>
+                </el-row>
+                <el-row>
+                  <el-input
+                    class="chatbodex_msg_content"
+                    v-model="item.msgContent"
+                    :disabled="true"
+                    :autosize="{minRows:1,maxRows:3}"
+                    type="textarea">
+                  </el-input>
+                </el-row>
+              </el-col>
+            </el-row>
+            <!--            <div class="chatbodex_msg_content"></div>-->
           </div>
         </div>
-      </div>
+      </Scroll>
       <el-input
         type="textarea"
         :autosize="{ minRows: 3, maxRows: 4}"
         placeholder="请输入内容"
         v-model="chatBox.sendMsg"
         class="chatbox_text_in_model"
-        @keyup.native.enter="doSend">
+        @keyup.native.enter="doSend($event)">
       </el-input>
     </el-dialog>
   </div>
@@ -72,38 +92,45 @@
                     {
                         userName: "TTTTTTTT",
                         userStatus: false,
-                        userLevel: 12
+                        userLevel: 12,
+                        userId: "123123"
                     },
                     {
                         userName: "TTTTTTTT",
                         userStatus: true,
-                        userLevel: 12
+                        userLevel: 12,
+                        userId: "123"
                     }
                 ],
-                chatBox: {
-                    tital: "",
-                    sendMsg: "",
-                    msgList: [
-                        {
-                            userName: "",
-                            createTime: "",
-                            msgContent: "",
-                            mcgId: "",
-                            direction: "left",
-                        },
-                        {
-                            userName: "",
-                            createTime: "",
-                            msgContent: "",
-                            mcgId: "",
-                            direction: "right",
-                        }
-                    ],
-                },
                 drawerIsShow: true,
                 dialogIsShow: false,
                 defaultActive: "1",
                 direction: 'rtl',
+                disabled: true,
+                openDelay: 2000,
+                placement: "left",
+                chatBox: {
+                    title: "",
+                    sendMsg: "",
+                    msgList: [
+                        {
+                            userName: "",
+                            userAvatar:"http://b-ssl.duitang.com/uploads/item/201810/18/20181018162951_kgwzm.thumb.700_0.jpeg",
+                            createTime: "2019-10-12",
+                            msgContent: "asdasd",
+                            mcgId: "1233",
+                            direction: "left",
+                        },
+                        {
+                            userName: "",
+                            userAvatar:"http://b-ssl.duitang.com/uploads/item/201810/18/20181018162951_kgwzm.thumb.700_0.jpeg",
+                            createTime: "2019-10-12",
+                            msgContent: "dd",
+                            mcgId: "1244",
+                            direction: "right",
+                        }
+                    ],
+                },
 
             }
         },
@@ -118,6 +145,8 @@
             showDraw() {
                 this.drawerIsShow = true
             },
+
+
             drawerHandleClose() {
                 this.drawerIsShow = false
             },
@@ -129,7 +158,8 @@
                 console.log(1)
                 this.dialogIsShow = true
                 console.log(row)
-                this.chatBox.tital = row.userName;
+                this.chatBox.title = row.userName;
+                this.disabled = true
             },
 
             /**
@@ -137,8 +167,31 @@
              * */
             dialogHandleClose() {
                 this.dialogIsShow = false
+                this.disabled = false
             },
-            doSend() {
+
+            load() {
+
+            },
+
+            /**
+             * 发送消息
+             * */
+            doSend(event) {
+                console.log(1)
+                event.preventDefault()
+                this.chatBox.msgList.push({
+                    // userName: this.props.userForm.userName,
+                    // userAvatar:this.userForm.userAvatar,
+                    // createTime: "2019-10-12",
+                    // msgContent: this.chatBox.sendMsg,
+                    mcgId: "1233",
+                    direction: "left",
+                })
+                console.log(event)
+                this.chatBox.sendMsg = ""
+
+                this.$socket.emit("connect","123")
 
             }
 
@@ -149,7 +202,7 @@
 <style scoped>
   .show_friend_button {
     width: 30px;
-    height: 110px;
+    height: 130px;
     border: 1px solid rgba(0, 0, 0, 0.1);
     position: fixed;
     right: 0px;
@@ -163,6 +216,12 @@
     background-color: rgba(0, 0, 0, 0.1);
     cursor: pointer;
     text-align: center;
+  }
+
+  .vfriend_drawer /deep/ .rtl {
+    border-left: 2px solid rgba(0, 0, 0, 0.1) !important;
+    border-bottom-left-radius: 16px;
+    border-top-left-radius: 16px;
   }
 
   .vfriend_drawer >>> li {
@@ -198,8 +257,10 @@
     /*display: inline;*/
   }
 
-  .el-dialog >>> .el-dialog__header {
+  .el-dialog__wrapper /deep/ .el-dialog__header {
     text-align: left !important;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.1);
   }
 
   .chatbox /deep/ .el-dialog__body {
@@ -208,10 +269,16 @@
 
   .chatbox_text_show_model {
     min-height: 400px;
+    overflow: auto;
     border-bottom: 1px solid gray;
     margin-left: auto;
     margin-right: auto;
     border-top: 1px solid gray;
+  }
+
+  .chatbox_msg_item {
+    margin-top: 20px;
+    height: 80px;
   }
 
   .chatbox_msg_right, .chatbox_msg_left {
@@ -222,20 +289,34 @@
 
   .chatbox_msg_right div, .chatbox_msg_right span {
     float: right;
-    margin-right: 4px;
-    line-height: 40px;
+    margin-right: 2px;
   }
 
   .chatbox_msg_left div, .chatbox_msg_left span {
     float: left;
-    margin-left: 4px;
-    line-height: 40px;
+    margin-left: 2px;
   }
 
-  .chatbox_msg_right .chatbodex_msg_content{
+  .chatbodex_msg_content {
+    width: 280px;
   }
 
-  .chatbodex_msg_content{
-    font-size: 20px;
+  .top, .bottom {
+    text-align: center;
   }
+
+  .center {
+    width: 300px;
+    margin: 10px auto;
+    overflow: hidden;
+  }
+
+  .center-left {
+    float: left;
+  }
+
+  .center-right {
+    float: right;
+  }
+
 </style>

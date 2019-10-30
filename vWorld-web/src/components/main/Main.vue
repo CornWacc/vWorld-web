@@ -3,7 +3,7 @@
     <el-header class="header">
       <el-row style="display: block">
         <el-col :span="15">
-          <div class="header-img"><p class="header-title">微世界</p></div>
+          <div class="header-img"><p class="header-title">世界</p></div>
         </el-col>
         <el-col :span="7">
           <el-input class="header-search" prefix-icon="el-icon-search" placeholder="搜索您想看的影片"></el-input>
@@ -151,6 +151,9 @@
                 if(c == "toPersonalData"){
                     this.$router.push({
                         path: "/personal",
+                        query:{
+                            userId:localStorage.getItem("userId")
+                        }
                     })
                 }
             },
@@ -221,14 +224,14 @@
     background-size: cover;
     position: relative;
     left: 60px;
-    /*top: 22px;*/
+    top: 25px;
   }
 
   .header-title {
     width: 100px;
     display: block;
     position: relative;
-    left: 50px;
+    left: 60px;
     top: 12px;
     font-size: 26px;
   }
@@ -319,5 +322,6 @@
     font-size: 12px;
     height: 30px !important;
     border-top: 1px solid black;
+    text-align: center;
   }
 </style>
