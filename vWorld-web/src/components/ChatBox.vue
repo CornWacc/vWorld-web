@@ -86,6 +86,7 @@
 <script>
     export default {
         name: "ChatBox",
+        props:["userForm"],
         data() {
             return {
                 vfriendList: [
@@ -109,13 +110,14 @@
                 disabled: true,
                 openDelay: 2000,
                 placement: "left",
+                socket: undefined,
                 chatBox: {
                     title: "",
                     sendMsg: "",
                     msgList: [
                         {
                             userName: "",
-                            userAvatar:"http://b-ssl.duitang.com/uploads/item/201810/18/20181018162951_kgwzm.thumb.700_0.jpeg",
+                            userAvatar: "http://b-ssl.duitang.com/uploads/item/201810/18/20181018162951_kgwzm.thumb.700_0.jpeg",
                             createTime: "2019-10-12",
                             msgContent: "asdasd",
                             mcgId: "1233",
@@ -123,7 +125,7 @@
                         },
                         {
                             userName: "",
-                            userAvatar:"http://b-ssl.duitang.com/uploads/item/201810/18/20181018162951_kgwzm.thumb.700_0.jpeg",
+                            userAvatar: "http://b-ssl.duitang.com/uploads/item/201810/18/20181018162951_kgwzm.thumb.700_0.jpeg",
                             createTime: "2019-10-12",
                             msgContent: "dd",
                             mcgId: "1244",
@@ -132,6 +134,29 @@
                     ],
                 },
 
+            }
+        },
+        mounted() {
+            this.socket = new WebSocket("ws://localhost:9099/ws")
+            this.socket.onopen = function () {
+                console.log("连接成功")
+            }
+
+            const that = this
+            this.socket.onmessage = function (data) {
+                console.log("接收到数据:"+data.data)
+                that.chatBox.msgList.push({
+                    userName: that.userForm.userName,
+                    userAvatar:that.userForm.userAvatar,
+                    createTime: "2019-10-12",
+                    msgContent: data.data,
+                    mcgId: that.openDelay++,
+                    direction: "left",
+                })
+            }
+
+            this.socket.onerror = function () {
+                console.log("发生错我")
             }
         },
         methods: {
@@ -178,23 +203,21 @@
              * 发送消息
              * */
             doSend(event) {
-                console.log(1)
-                event.preventDefault()
                 this.chatBox.msgList.push({
-                    // userName: this.props.userForm.userName,
-                    // userAvatar:this.userForm.userAvatar,
-                    // createTime: "2019-10-12",
-                    // msgContent: this.chatBox.sendMsg,
-                    mcgId: "1233",
+                    userName: this.userForm.userName,
+                    userAvatar:this.userForm.userAvatar,
+                    createTime: "2019-10-12",
+                    msgContent: this.chatBox.sendMsg,
+                    mcgId: this.openDelay++,
                     direction: "left",
                 })
-                console.log(event)
+
+                this.socket.send(this.chatBox.sendMsg)
+
                 this.chatBox.sendMsg = ""
 
-                this.$socket.emit("connect","123")
 
             }
-
         }
     }
 </script>

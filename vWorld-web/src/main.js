@@ -21,12 +21,13 @@ Vue.prototype.$axios = axios
 Vue.prototype.Globel = Globel
 Vue.config.productionTip = false
 
-Vue.use(
-  new VueSocketIO({
-    debug: true,
-    connection: "http://localhost:9888",
-  })
-);
+// Vue.use(
+//   new VueSocketIO({
+//     debug: true,
+//     connection: "http://localhost:9099",
+//     path:"ws"
+//   })
+// );
 
 /* eslint-disable no-new */
 new Vue({

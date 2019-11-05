@@ -29,7 +29,7 @@
               <el-col :span="2">
                 <el-avatar :size="80" :src="this.userForm.userAvatar" class="main_left_model_user_header"></el-avatar>
               </el-col>
-              <el-col :lg="{span:12,offset:1}" :xl="{span:10,offset:0}" class="main_left_model_user_base">
+              <el-col :lg="{span:12,offset:2}" :xl="{span:10,offset:2}" class="main_left_model_user_base">
                 <el-row><p style="display: inline;" class="user_name">CornWacc</p>
                   <li style="margin-left: 12px;font-size: 16px">Boy</li>
                   <p class="user_level" style="display: inline;">Lv24</p></el-row>
@@ -82,7 +82,7 @@
       </el-row>
     </el-main>
 <!--    <el-footer></el-footer>-->
-    <chat-box></chat-box>
+    <chat-box :userForm="userForm"></chat-box>
   </el-container>
 </template>
 
