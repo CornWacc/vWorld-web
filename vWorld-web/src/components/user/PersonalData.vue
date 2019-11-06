@@ -30,9 +30,9 @@
                 <el-avatar :size="80" :src="this.userForm.userAvatar" class="main_left_model_user_header"></el-avatar>
               </el-col>
               <el-col :lg="{span:12,offset:2}" :xl="{span:10,offset:2}" class="main_left_model_user_base">
-                <el-row><p style="display: inline;" class="user_name">CornWacc</p>
-                  <li style="margin-left: 12px;font-size: 16px">Boy</li>
-                  <p class="user_level" style="display: inline;">Lv24</p></el-row>
+                <el-row><p style="display: inline;" class="user_name">{{this.userForm.userName}}</p>
+                  <li style="margin-left: 12px;font-size: 16px">{{this.userForm.userSex}}</li>
+                  <p class="user_level" style="display: inline;">Lv{{this.userForm.userLevel}}</p></el-row>
                 <el-row class="user_info">关注|粉丝|视频数|点赞|</el-row>
               </el-col>
             </el-row>
@@ -81,13 +81,14 @@
         </el-col>
       </el-row>
     </el-main>
-<!--    <el-footer></el-footer>-->
+    <!--    <el-footer></el-footer>-->
     <chat-box :userForm="userForm"></chat-box>
   </el-container>
 </template>
 
 <script>
     import ChatBox from "../ChatBox";
+
     export default {
         name: "PersonalData",
         components: {
@@ -100,7 +101,10 @@
                     userName: "",
                     userRoleId: "",
                     isAdmin: false,
-                    userRole:""
+                    userRole: "",
+                    userSex: "",
+                    userLevel: 0,
+                    userId: ""
                 },
                 searchUserInput: "",
                 drawerIsShow: true,
@@ -110,20 +114,23 @@
 
             }
         },
-        mounted(){
+        created() {
             console.log(this.$route.params)
-            this.$axios({
-                url:this.Globel.requestUrl+"/user/userInfoQuery?userId="+this.$route.query.userId
-            }).then(res =>{
-                if(res.data.success){
-                    this.userForm = res.data.data
-                    this.userForm.isAdmin = res.data.data.userRole == "ADMIN" ? true : false
-                    console.log(this.userForm)
-                }
-            })
-
+            this.getUser()
         },
         methods: {
+            async getUser(){
+                await this.$axios({
+                    url: this.Globel.requestUrl + "/user/userInfoQuery?userId=" + this.$route.query.userId
+                }).then(res => {
+                    if (res.data.success) {
+                        this.userForm = res.data.data
+                        this.userForm.isAdmin = res.data.data.userRole == "ADMIN" ? true : false
+                        console.log(this.userForm)
+                    }
+                })
+            },
+
             /**
              * dropdown点击绑定事件
              * */

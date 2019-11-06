@@ -86,18 +86,18 @@
 <script>
     export default {
         name: "ChatBox",
-        props:["userForm"],
+        props: ["userForm"],
         data() {
             return {
                 vfriendList: [
                     {
-                        userName: "TTTTTTTT",
+                        userName: "老王",
                         userStatus: false,
                         userLevel: 12,
                         userId: "123123"
                     },
                     {
-                        userName: "TTTTTTTT",
+                        userName: "老张",
                         userStatus: true,
                         userLevel: 12,
                         userId: "123"
@@ -114,52 +114,39 @@
                 chatBox: {
                     title: "",
                     sendMsg: "",
-                    msgList: [
-                        {
-                            userName: "",
-                            userAvatar: "http://b-ssl.duitang.com/uploads/item/201810/18/20181018162951_kgwzm.thumb.700_0.jpeg",
-                            createTime: "2019-10-12",
-                            msgContent: "asdasd",
-                            mcgId: "1233",
-                            direction: "left",
-                        },
-                        {
-                            userName: "",
-                            userAvatar: "http://b-ssl.duitang.com/uploads/item/201810/18/20181018162951_kgwzm.thumb.700_0.jpeg",
-                            createTime: "2019-10-12",
-                            msgContent: "dd",
-                            mcgId: "1244",
-                            direction: "right",
-                        }
-                    ],
+                    to:"",   //todo 这里可能是单用户id或是群聊
+                    msgList: [],
                 },
 
             }
         },
         mounted() {
-            this.socket = new WebSocket("ws://localhost:9099/ws")
-            this.socket.onopen = function () {
-                console.log("连接成功")
-            }
-
-            const that = this
-            this.socket.onmessage = function (data) {
-                console.log("接收到数据:"+data.data)
-                that.chatBox.msgList.push({
-                    userName: that.userForm.userName,
-                    userAvatar:that.userForm.userAvatar,
-                    createTime: "2019-10-12",
-                    msgContent: data.data,
-                    mcgId: that.openDelay++,
-                    direction: "left",
-                })
-            }
-
-            this.socket.onerror = function () {
-                console.log("发生错我")
-            }
+            this.getSocket()
         },
         methods: {
+            async getSocket() {
+                const that = this
+                this.socket = new WebSocket("ws://localhost:9888/ws")
+                this.socket.onopen = function () {
+                    console.log("连接成功")
+                    that.socket.send("WS/" + "INIT/" + that.$route.query.userId + "//" + "connection");
+                }
+                this.socket.onmessage = function (data) {
+                    console.log("接收到数据:" + data.data)
+                    that.chatBox.msgList.push({
+                        userName: that.userForm.userName,
+                        userAvatar: that.userForm.userAvatar,
+                        createTime: new Date().getFullYear() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getDay(),
+                        msgContent: data.data,
+                        mcgId: that.openDelay++,
+                        direction: "left",
+                    })
+                }
+
+                this.socket.onerror = function () {
+                    console.log("webSocket连接发生错误")
+                }
+            },
 
             errorHandler() {
             },
@@ -205,15 +192,14 @@
             doSend(event) {
                 this.chatBox.msgList.push({
                     userName: this.userForm.userName,
-                    userAvatar:this.userForm.userAvatar,
-                    createTime: "2019-10-12",
+                    userAvatar: this.userForm.userAvatar,
+                    createTime: new Date().format("yyyy-MM-dd hh:mm:ss"),
                     msgContent: this.chatBox.sendMsg,
                     mcgId: this.openDelay++,
-                    direction: "left",
+                    direction: "right",
                 })
 
-                this.socket.send(this.chatBox.sendMsg)
-
+                this.socket.send("WS/" + "/SINGLE/" + this.userForm.userId + "/" + this.chatBox.to + "/" + this.chatBox.sendMsg);
                 this.chatBox.sendMsg = ""
 
 
