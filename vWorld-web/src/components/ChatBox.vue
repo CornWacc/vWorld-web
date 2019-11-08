@@ -15,10 +15,10 @@
       class="vfriend_drawer">
       <el-col>
         <div style="text-align: center">
-          <el-row style="font-size: 20px;font-weight: bolder;margin-bottom: 4px">CornWacc
+          <el-row style="font-size: 20px;font-weight: bolder;margin-bottom: 4px">{{userForm.userName}}
             <li class="iconfont icon-huo" style="margin-left: 2px"></li>
           </el-row>
-          <el-row style="font-size: 13px;margin-bottom: 10px;font-style: italic">Lv24</el-row>
+          <el-row style="font-size: 13px;margin-bottom: 10px;font-style: italic">Lv{{userForm.userLevel}}</el-row>
         </div>
         <el-row v-for="item in vfriendList" :key="item.userId" class="vfriend_list_item">
           <div @click="showChatBox(item)">
@@ -77,7 +77,7 @@
         placeholder="请输入内容"
         v-model="chatBox.sendMsg"
         class="chatbox_text_in_model"
-        @keyup.native.enter="doSend($event)">
+        @keydown.native.enter.prevent="doSend($event)">
       </el-input>
     </el-dialog>
   </div>
@@ -91,10 +91,10 @@
             return {
                 vfriendList: [
                     {
-                        userName: "老王",
+                        userName: "1234",
                         userStatus: false,
                         userLevel: 12,
-                        userId: "123123"
+                        userId: "usyQO9QoGumadi20191108153809"
                     },
                     {
                         userName: "老张",
@@ -103,6 +103,11 @@
                         userId: "123"
                     }
                 ],
+                fromUserInfo: {
+                    userId: "",
+                    userName: "",
+                    userAvatar: ""
+                },
                 drawerIsShow: true,
                 dialogIsShow: false,
                 defaultActive: "1",
@@ -114,7 +119,7 @@
                 chatBox: {
                     title: "",
                     sendMsg: "",
-                    to:"",   //todo 这里可能是单用户id或是群聊
+                    toUserId: "",   //todo 这里可能是单用户id或是群聊
                     msgList: [],
                 },
 
@@ -129,15 +134,17 @@
                 this.socket = new WebSocket("ws://localhost:9888/ws")
                 this.socket.onopen = function () {
                     console.log("连接成功")
-                    that.socket.send("WS/" + "INIT/" + that.$route.query.userId + "//" + "connection");
+                    that.fromUserInfo.userId = that.$route.query.userId
+                    that.socket.send("WS/x/" + "INIT/x/" + JSON.stringify(that.fromUserInfo) + "/x//x/" + "connection");
                 }
                 this.socket.onmessage = function (data) {
-                    console.log("接收到数据:" + data.data)
+                    console.log("接收到数据:",JSON.parse(data.data))
+                    let getMsg = JSON.parse(data.data)
                     that.chatBox.msgList.push({
-                        userName: that.userForm.userName,
-                        userAvatar: that.userForm.userAvatar,
-                        createTime: new Date().getFullYear() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getDay(),
-                        msgContent: data.data,
+                        userName: getMsg.baseMsgUserInfo.userName,
+                        userAvatar: getMsg.baseMsgUserInfo.userAvatar,
+                        createTime: new Date().format("yyyy-MM-dd hh:mm:ss"),
+                        msgContent: getMsg.msgContent,
                         mcgId: that.openDelay++,
                         direction: "left",
                     })
@@ -167,11 +174,11 @@
              * 显示用户对话框
              * */
             showChatBox(row) {
-                console.log(1)
-                this.dialogIsShow = true
-                console.log(row)
+                this.dialogIsShow = true;
+                console.log(row);
                 this.chatBox.title = row.userName;
-                this.disabled = true
+                this.disabled = true;
+                this.chatBox.toUserId = row.userId;
             },
 
             /**
@@ -199,7 +206,13 @@
                     direction: "right",
                 })
 
-                this.socket.send("WS/" + "/SINGLE/" + this.userForm.userId + "/" + this.chatBox.to + "/" + this.chatBox.sendMsg);
+                this.fromUserInfo = {
+                    userId: this.userForm.userId,
+                    userName: this.userForm.userName,
+                    userAvatar: this.userForm.userAvatar
+                }
+
+                this.socket.send("WS/x/" + "SINGLE/x/" + JSON.stringify(this.fromUserInfo) + "/x/" + this.chatBox.toUserId + "/x/" + this.chatBox.sendMsg);
                 this.chatBox.sendMsg = ""
 
 
