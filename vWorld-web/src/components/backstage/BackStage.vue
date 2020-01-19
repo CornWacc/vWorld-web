@@ -14,9 +14,9 @@
           <div class="menu">
             <el-menu
               default-active="2"
-              class="el-menu-vertical-demo"
               @open="handleOpen"
-              @close="handleClose">
+              @close="handleClose"
+              style="text-align: center">
               <el-submenu index="1">
                 <template slot="title">
                   <i class="iconfont icon-user"></i>
@@ -86,32 +86,32 @@
 </template>
 
 <script>
-  export default {
-    name: "BackStage",
-    data() {
-      return {
-        userName: "Corn"
-      }
-    },
-    mounted() {
-       this.$axios({
-         url:this.Globel.requestUrl+"/user/userInfoQuery?userId="+localStorage.getItem("userId")
-       }).then(res => {
-         this.userName = res.data.data.userName
-       })
-    },
-    methods: {
-      handleOpen(key, keyPath) {
-        console.log(key, keyPath);
-      },
-      handleClose(key, keyPath) {
-        // console.log(key, keyPath);
-      },
-      toMain() {
-        this.$router.push("/main")
-      }
+    export default {
+        name: "BackStage",
+        data() {
+            return {
+                userName: "Corn"
+            }
+        },
+        mounted() {
+            this.$axios({
+                url: this.Globel.requestUrl + "/user/userInfoQuery?userId=" + localStorage.getItem("userId")
+            }).then(res => {
+                this.userName = res.data.data.userName
+            })
+        },
+        methods: {
+            handleOpen(key, keyPath) {
+                console.log(key, keyPath);
+            },
+            handleClose(key, keyPath) {
+                // console.log(key, keyPath);
+            },
+            toMain() {
+                this.$router.push("/main")
+            }
+        }
     }
-  }
 </script>
 
 <style scoped>

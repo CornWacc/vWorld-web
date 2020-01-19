@@ -32,7 +32,7 @@
               <el-col :lg="{span:12,offset:2}" :xl="{span:10,offset:2}" class="main_left_model_user_base">
                 <el-row><p style="display: inline;" class="user_name">{{this.userForm.userName}}</p>
                   <li style="margin-left: 12px;font-size: 16px">{{this.userForm.userSex}}</li>
-                  <p class="user_level" style="display: inline;">Lv{{this.userForm.userLevel}}</p></el-row>
+                  <p class="user_level" style="display: inline;">Lv.{{this.userForm.userLevel}}</p></el-row>
                 <el-row class="user_info">关注|粉丝|视频数|点赞|</el-row>
               </el-col>
             </el-row>
@@ -75,8 +75,36 @@
             <el-input
               placeholder="请输入希望查询的用户"
               prefix-icon="el-icon-search"
-              v-model="searchUserInput">
+              v-model="searchForm.searchUserInput">
             </el-input>
+            <div class="main_right_model_search_res">
+              <el-row v-for="item in searchForm.searchUserResultList" :key="item.id" class="search_user_res_item">
+                <el-col class="search_user_res_item_avatar" span="6">
+                  <el-avatar :src="item.userAvatar" :size="item.size"></el-avatar>
+                </el-col>
+                <el-col class="search_user_res_item_info" span="7" offset="1">
+                  <el-row style="margin-top: 10px">
+                    <span style="font-size: 24px;font-weight: bolder">{{item.userName}}</span>
+                    <span style="font-size: 18px">{{item.userSex}}</span>
+                  </el-row>
+                  <el-row>
+                    <span>Lv.{{item.userLevel}}</span>
+                  </el-row>
+                </el-col>
+                <el-col span="4" offset="6">
+                  <el-row>
+                    <el-tag :effect="item.online ? 'success' : 'info'" size="small" style="margin-top: 10px">
+                      {{ item.online ? '在线' : '离线' }}
+                    </el-tag>
+                  </el-row>
+                  <el-row>
+                    <mu-button fab small color="PowDerBlue" style="margin-top: 8px">
+                      <mu-icon value="+"></mu-icon>
+                    </mu-button>
+                  </el-row>
+                </el-col>
+              </el-row>
+            </div>
           </div>
         </el-col>
       </el-row>
@@ -87,7 +115,7 @@
 </template>
 
 <script>
-    import ChatBox from "../ChatBox";
+    import ChatBox from "../widget/ChatBox";
 
     export default {
         name: "PersonalData",
@@ -106,7 +134,10 @@
                     userLevel: 0,
                     userId: ""
                 },
-                searchUserInput: "",
+                searchForm: {
+                    searchUserInput: "",
+                    searchUserResultList: [],
+                },
                 drawerIsShow: true,
                 dialogIsShow: false,
                 defaultActive: "1",
@@ -119,7 +150,7 @@
             this.getUser()
         },
         methods: {
-            async getUser(){
+            async getUser() {
                 await this.$axios({
                     url: this.Globel.requestUrl + "/user/userInfoQuery?userId=" + this.$route.query.userId
                 }).then(res => {
@@ -293,6 +324,21 @@
 
   .main_right_model_search >>> .el-input__inner {
     border-radius: 16px;
+  }
+
+  .main_right_model_search_res {
+    width: 100%;
+    height: 100%;
+    margin-top: 20px;
+  }
+
+  .search_user_res_item {
+    width: 100%;
+    height: 94px;
+    border: 2px solid gray;
+    border-radius: 16px;
+    margin-top: 14px;
+    box-shadow: 3px 3px 3px rgba(0,0,0,0.2);
   }
 
 

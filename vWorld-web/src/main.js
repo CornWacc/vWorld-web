@@ -9,14 +9,15 @@ import axios from 'axios'
 import 'swiper/dist/css/swiper.css'
 import './assets/iconFont/iconfont.css'
 import './assets/font_n7lakczx9p/iconfont.css'
-import  Globel from './globel'
+import Globel from './globel'
 import ViewUI from 'view-design'
 import 'view-design/dist/styles/iview.css'
-import VueSocketIO from 'vue-socket.io'
+import MuseUI from 'muse-ui'
+import 'muse-ui/dist/muse-ui.css'
 
+Vue.use(MuseUI)
 Vue.use(element)
 Vue.use(ViewUI)
-// Vue.use(Swiper)
 Vue.prototype.$axios = axios
 Vue.prototype.Globel = Globel
 Vue.config.productionTip = false

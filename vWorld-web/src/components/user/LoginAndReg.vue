@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="all">
     <el-header class="header">
       <div class="header-img">
         <p class="header-title">微世界</p>
@@ -278,7 +278,7 @@
 
 <style scoped>
 
-  .container {
+  .all {
     width: 100%;
     height: 100%;
     background: url("../../img/login/bkg.jpg");
